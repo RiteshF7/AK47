@@ -16,8 +16,8 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">Test DPC</string>
-    <string name="setup_app_name">Set up Test DPC</string>
+    <string name="app_name">RASC</string>
+    <string name="setup_app_name">Set up RASC</string>
     <string name="cancel">Cancel</string>
     <string name="set_up_managed_profile">Set up managed profile</string>
     <string name="set_up_device_owner">Set up device owner</string>

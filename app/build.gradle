@@ -1,14 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id  'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+
+
 }
 
 android {
-    namespace 'com.afwsamples.testdpc'
+    namespace 'com.trex.rexandroidsecureclient'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.afwsamples.testdpc"
+        applicationId "com.trex.rexandroidsecureclient"
         minSdk 24
         targetSdk 34
         versionCode 1
@@ -28,11 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 
@@ -73,4 +78,22 @@ dependencies {
     implementation "javax.inject:javax.inject:1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.70"
     implementation "org.bouncycastle:bcprov-jdk15on:1.70"
+    def retrofit_version = "2.11.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    def moshi_version = "1.13.0"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+// For annotation processing (if you're using codegen)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-directboot:20.2.0")
+
+
 }

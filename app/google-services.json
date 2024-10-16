@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158761714958",
+    "project_id": "laxmi-emi",
+    "storage_bucket": "laxmi-emi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158761714958:android:d350f3a9d12d20093a835f",
+        "android_client_info": {
+          "package_name": "com.trex.rexandroidsecureclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6KVRwZVS6CRDwgAo8JwhRSiTs2NNAcZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
