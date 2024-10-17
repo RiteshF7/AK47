@@ -28,13 +28,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.trex.rexandroidsecureclient.common.DumpableActivity;
 import com.trex.rexandroidsecureclient.common.OnBackPressedHandler;
 import com.trex.rexandroidsecureclient.policy.PolicyManagementFragment;
@@ -47,8 +43,7 @@ import java.io.PrintWriter;
  * An entry activity that shows a profile setup fragment if the app is not a profile or device
  * owner. Otherwise, a policy management fragment is shown.
  */
-public class PolicyManagementActivity extends DumpableActivity
-        implements FragmentManager.OnBackStackChangedListener {
+public class PolicyManagementActivity extends DumpableActivity implements FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = PolicyManagementActivity.class.getSimpleName();
 
@@ -63,17 +58,12 @@ public class PolicyManagementActivity extends DumpableActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(this,EnterDetailsActivity.class));
+        startActivity(new Intent(this, EnterDetailsActivity.class));
         if (savedInstanceState == null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(
-                            R.id.container, new PolicyManagementFragment(), PolicyManagementFragment.FRAGMENT_TAG)
-                    .commit();
+            getFragmentManager().beginTransaction().add(R.id.container, new PolicyManagementFragment(), PolicyManagementFragment.FRAGMENT_TAG).commit();
         }
         getFragmentManager().addOnBackStackChangedListener(this);
     }
-
 
 
     @Override
@@ -86,11 +76,7 @@ public class PolicyManagementActivity extends DumpableActivity
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.action_show_search) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, PolicySearchFragment.newInstance())
-                    .addToBackStack("search")
-                    .commit();
+            getFragmentManager().beginTransaction().replace(R.id.container, PolicySearchFragment.newInstance()).addToBackStack("search").commit();
         } else if (itemId == id.home) {
             getFragmentManager().popBackStack();
         }
@@ -199,14 +185,12 @@ public class PolicyManagementActivity extends DumpableActivity
     private void askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "Notification permission granted");
             } else {
                 Log.e(TAG, "Notification permission missing");
                 // Directly ask for the permission
-                ActivityCompat.requestPermissions(
-                        this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
     }
