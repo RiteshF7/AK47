@@ -33,7 +33,7 @@
     <string name="account_migration_failed_message">Account failed to migrate:</string>
     <string name="add_account_later_message">Please add the account later.</string>
     <string name="setup_label">Set up</string>
-    <string name="profile_name">Sample Managed Profile</string>
+    <string name="profile_name">RexProfile</string>
     <string name="skip_user_setup">Skip user setup</string>
     <string name="skip_user_consent">Skip user consent during provisioning</string>
     <string name="keep_account_migrated">Keep account on this user, if migrated</string>
