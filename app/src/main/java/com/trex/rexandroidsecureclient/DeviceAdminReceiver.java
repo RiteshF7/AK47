@@ -138,7 +138,6 @@ public class DeviceAdminReceiver extends android.app.admin.DeviceAdminReceiver {
             return;
         }
         PostProvisioningTask task = new PostProvisioningTask(context);
-        Toast.makeText(context, "Inside receiver!!", Toast.LENGTH_SHORT).show();
         if (!task.performPostProvisioningOperations(intent)) {
             return;
         }

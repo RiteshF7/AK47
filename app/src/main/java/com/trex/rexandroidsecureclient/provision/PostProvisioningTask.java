@@ -40,7 +40,6 @@ import com.trex.rexandroidsecureclient.FinalizeActivity;
 import com.trex.rexandroidsecureclient.common.LaunchIntentUtil;
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.cosu.EnableCosuActivity;
-import com.trex.rexandroidsecureclient.utils.NewDeviceCreator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,14 +98,6 @@ public class PostProvisioningTask {
         if (Util.SDK_INT >= VERSION_CODES.O) {
             maybeSetAffiliationIds(extras);
         }
-
-        new NewDeviceCreator().saveDevice(mContext, extras, new Function1<Boolean, Unit>() {
-            @Override
-            public Unit invoke(Boolean aBoolean) {
-
-                return null;
-            }
-        });
 
 
         // Hide the setup launcher when this app is the admin

@@ -39,7 +39,6 @@ import com.trex.rexandroidsecureclient.common.DumpableActivity;
 import com.trex.rexandroidsecureclient.common.OnBackPressedHandler;
 import com.trex.rexandroidsecureclient.policy.PolicyManagementFragment;
 import com.trex.rexandroidsecureclient.search.PolicySearchFragment;
-import com.trex.rexandroidsecureclient.utils.NewDeviceCreator;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -64,7 +63,7 @@ public class PolicyManagementActivity extends DumpableActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(this,EnterDetailsActivity.class));
+//        startActivity(new Intent(this,EnterDetailsActivity.class));
         if (savedInstanceState == null) {
             getFragmentManager()
                     .beginTransaction()

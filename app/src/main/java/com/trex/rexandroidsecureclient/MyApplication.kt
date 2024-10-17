@@ -10,7 +10,6 @@ import android.widget.Toast
 import com.google.firebase.FirebaseApp
 
 class MyApplication : Application() {
-
     companion object {
         private var instance: MyApplication? = null
         const val TAG = "APPLICATION CLASS"
@@ -25,18 +24,16 @@ class MyApplication : Application() {
         }
 
         fun isDeviceOwner(): Boolean {
-            //TODO
+            // TODO
             return false
         }
     }
-
 
     override fun onCreate() {
         super.onCreate()
         instance = this
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
-        Toast.makeText(getAppContext(), "App started!", Toast.LENGTH_SHORT).show()
     }
 
     fun createNotificationChannel(context: Context) {
