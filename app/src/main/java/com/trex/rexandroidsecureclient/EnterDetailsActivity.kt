@@ -1,12 +1,12 @@
 package com.trex.rexandroidsecureclient
 
 import android.app.Activity
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.trex.rexandroidsecureclient.utils.NewDeviceCreator
 
 class EnterDetailsActivity : Activity() {
     private lateinit var enterImeiEditText: EditText
@@ -31,11 +31,19 @@ class EnterDetailsActivity : Activity() {
     }
 
     private fun createNewDevice(imei: String) {
-        NewDeviceCreator().saveAfterGettingImei {
-            val intent = Intent(this, FinalizeActivity::class.java)
-            startActivity(intent)
-            showToast("New device created with IMEI: $imei")
-        }
+        getErrorLogs()
+//        NewDeviceCreator().saveAfterGettingImei {
+//            val intent = Intent(this, FinalizeActivity::class.java)
+//            startActivity(intent)
+//            showToast("New device created with IMEI: $imei")
+//        }
+    }
+
+    fun getErrorLogs() {
+        val sharedPreferences = getSharedPreferences("CrashLogPrefs", Context.MODE_PRIVATE)
+        val errorLog = sharedPreferences.getString("error_log", "No crash log found")
+        Log.d("CrashLog", errorLog ?: "Not found error")
+        Toast.makeText(this, "$errorLog", Toast.LENGTH_SHORT).show()
     }
 
     private fun showToast(message: String) {

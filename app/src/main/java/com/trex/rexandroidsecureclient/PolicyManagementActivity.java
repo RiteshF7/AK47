@@ -63,7 +63,7 @@ public class PolicyManagementActivity extends DumpableActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        startActivity(new Intent(this,EnterDetailsActivity.class));
+        startActivity(new Intent(this,EnterDetailsActivity.class));
         if (savedInstanceState == null) {
             getFragmentManager()
                     .beginTransaction()

@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
+import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 
 class MyApplication : Application() {
     companion object {
@@ -31,6 +32,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
         instance = this
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
