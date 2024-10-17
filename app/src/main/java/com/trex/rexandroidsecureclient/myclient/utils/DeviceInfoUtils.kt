@@ -8,7 +8,6 @@ import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.trex.rexandroidsecureclient.MyApplication
@@ -21,8 +20,7 @@ class DeviceInfoUtil {
 
     fun getDeviceModel(): String = Build.MODEL.ifBlank { "Unknown" }
 
-    fun getDeviceName(): String =
-        Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME) ?: "Unknown"
+    fun getDeviceName(): String = Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME) ?: "Unknown"
 
     fun getAndroidVersion(): String = Build.VERSION.RELEASE.ifBlank { "Unknown" }
 
@@ -67,11 +65,13 @@ class DeviceInfoUtil {
                         context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
                     val imei = telephonyManager.imei ?: ClientSharedPrefs.IMEI_NOT_FOUND
                     ClientSharedPrefs().saveImei(imei)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 }
+            } else {
+                ClientSharedPrefs().saveImei(ClientSharedPrefs.IMEI_NOT_FOUND)
             }
         } else {
-            Toast.makeText(context, "Imei permission not granted!", Toast.LENGTH_SHORT).show()
+            ClientSharedPrefs().saveImei(ClientSharedPrefs.IMEI_NOT_FOUND)
         }
     }
 
@@ -87,7 +87,7 @@ class DeviceInfoUtil {
         return manager.isDeviceOwnerApp(context.packageName)
     }
 
-    private fun saveFcmToken() {
+    fun saveFcmToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -96,13 +96,7 @@ class DeviceInfoUtil {
 
             // Get new FCM registration token
             val token = task.result
-
-            // Log the token
-            Log.d(TAG, "FCM Token: $token")
-
-            // Here you can add code to save the token
-            // For example, you might want to send it to your server
-            // or save it in SharedPreferences
+            ClientSharedPrefs().saveFcmToken(token)
         }
     }
 

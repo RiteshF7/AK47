@@ -20,6 +20,7 @@ import android.Manifest;
 import android.R.id;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,11 +64,7 @@ public class PolicyManagementActivity extends DumpableActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        createDevice();
-        saveFcmToken();
-
-        saveFcmToken();
-
+        startActivity(new Intent(this,EnterDetailsActivity.class));
         if (savedInstanceState == null) {
             getFragmentManager()
                     .beginTransaction()
@@ -79,34 +76,6 @@ public class PolicyManagementActivity extends DumpableActivity
     }
 
 
-    private void saveFcmToken() {
-        try {
-            FirebaseMessaging.getInstance().getToken()
-                    .addOnCompleteListener(new OnCompleteListener<String>() {
-                        @Override
-                        public void onComplete(@NonNull Task<String> task) {
-                            try {
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                                    return;
-                                }
-
-                                // Get new FCM registration token
-                                String token = task.getResult();
-
-                                // Log the token
-                                Log.d(TAG, "FCM Token: " + token);
-
-                                // Save the token
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error in onComplete: ", e);
-                            }
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Error in saveFcmToken: ", e);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

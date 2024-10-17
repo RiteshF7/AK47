@@ -1,9 +1,8 @@
 package com.trex.rexandroidsecureclient.utils
 
 import DeviceInfoUtil
-import android.app.admin.DevicePolicyManager
 import android.content.Context
-import android.content.Intent
+import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.MyApplication
@@ -26,77 +25,53 @@ class NewDeviceCreator {
 
     fun saveDevice(
         context: Context,
-        intent: Intent,
-        onSaved: () -> Unit,
+        extras: PersistableBundle,
+        onResult: (Boolean) -> Unit,
     ) {
-        // get device info
+        // can comment this in production
+        deviceInfoUtils.saveFcmToken()
+        getShopIdFromIntent(extras)
         deviceInfoUtils.saveImei()
-
-        // get shop id from intent
-        val shopId = getShopIdFromIntent(intent)
-
-        // create new device
-        val newDevice = createNewDevice(context, shopId)
-
-        if (newDevice.imeiOne == ClientSharedPrefs.IMEI_NOT_FOUND || newDevice.shopId == ClientSharedPrefs.DUMMY_SHOP_ID) {
-            Toast.makeText(context, "Please Enter Details", Toast.LENGTH_SHORT).show()
-            startMainActivity(context, newDevice)
-        } else {
-            saveDeviceToFirebase(newDevice) {
-                onSaved()
-            }
-        }
-    }
-
-    fun createDummyDevice() {
-        // get device info
-        deviceInfoUtils.saveImei()
-
-        // get shop id from intent
-        val shopId = "+919910000163"
-
-        // create new device
-        val newDevice = createNewDevice(context, shopId)
+        val newDevice = createNewDevice(context)
+        Log.i(TAG, "saveDevice: ${newDevice.imeiOne}")
+//        if (newDevice.imeiOne == ClientSharedPrefs.IMEI_NOT_FOUND || newDevice.imeiOne.isBlank()) {
+//            onResult(false)
+//        }
+        Log.i(TAG, "saveDevice: trying to save")
         saveDeviceToFirebase(newDevice) {
-
+            onResult(true)
         }
     }
 
-    private fun getShopIdFromIntent(intent: Intent): String {
-        val extras =
-            intent.getBundleExtra(DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE)
-        if (extras == null) {
-            Log.e(TAG, "saveAndGetShopID: Extras null")
-            Toast
-                .makeText(
-                    context,
-                    ClientSharedPrefs.SHOP_ID_NOT_FOUND + " EMPTY BUNDLE!",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            return ClientSharedPrefs.DUMMY_SHOP_ID
+    fun saveAfterGettingImei(onResult: (Boolean) -> Unit) {
+        val newDevice = createNewDevice(context)
+        Log.i(TAG, "saveAfterGettingImei: $newDevice")
+        saveDeviceToFirebase(newDevice) {
+            onResult(true)
         }
-        val shopId = extras.getString(ClientSharedPrefs.SHOP_ID)
-        if (shopId == null) {
-            Toast
-                .makeText(
-                    context,
-                    "${ClientSharedPrefs.SHOP_ID_NOT_FOUND} Shopid is null in extras",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            return ClientSharedPrefs.DUMMY_SHOP_ID
-        }
-        clientSharedPrefs.saveShopId(shopId)
-        return shopId
     }
 
-    private fun createNewDevice(
-        context: Context,
-        shopId: String,
-    ): NewDevice {
+    fun getShopIdFromIntent(extras: PersistableBundle): String =
+
+        extras.getString(ClientSharedPrefs.SHOP_ID)?.also {
+            clientSharedPrefs.saveShopId(it)
+        } ?: run {
+            Log.e(TAG, "getShopIdFromIntent: Shop ID not found in extras")
+            Toast
+                .makeText(
+                    context,
+                    "${ClientSharedPrefs.SHOP_ID_NOT_FOUND} Shop ID missing!",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            ClientSharedPrefs.DUMMY_SHOP_ID
+        }
+
+    private fun createNewDevice(context: Context): NewDevice {
+        val shopId = clientSharedPrefs.getShopId()
         showNotificationOnDummyId(shopId, context)
         val device =
             NewDevice(
-                shopId = shopId,
+                shopId = clientSharedPrefs.getShopId(),
                 imeiOne = clientSharedPrefs.getImei(),
                 fcmToken = clientSharedPrefs.getFcmToken(),
                 manufacturer = deviceInfoUtils.getManufacturer(),
@@ -122,19 +97,6 @@ class NewDeviceCreator {
                     Toast.LENGTH_SHORT,
                 ).show()
         }
-    }
-
-    private fun startMainActivity(
-        context: Context,
-        newDevice: NewDevice,
-    ) {
-        //TODO
-//        val launchIntent = Intent(context, MainActivity::class.java)
-//        launchIntent.apply {
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//            putExtra(MainActivity.NEW_DEVICE, newDevice)
-//        }
-//        context.startActivity(launchIntent)
     }
 
     fun saveDeviceToFirebase(
