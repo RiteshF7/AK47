@@ -40,6 +40,7 @@ public class ProvisioningSuccessActivity extends Activity {
       return;
     }
 
+
     Intent launchIntent = task.getPostProvisioningLaunchIntent(getIntent());
     if (launchIntent != null) {
       startActivity(launchIntent);

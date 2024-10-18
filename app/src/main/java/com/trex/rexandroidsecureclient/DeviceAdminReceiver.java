@@ -477,6 +477,7 @@ public class DeviceAdminReceiver extends android.app.admin.DeviceAdminReceiver {
         Log.i(TAG, "Device admin enabled in user with serial number: " + serialNumber);
     }
 
+
     private static File logFile(Context context) {
         File parent = context.getDir(LOGS_DIR, Context.MODE_PRIVATE);
         return new File(parent, FAILED_PASSWORD_LOG_FILE);

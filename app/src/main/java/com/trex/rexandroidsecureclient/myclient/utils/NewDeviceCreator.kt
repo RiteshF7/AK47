@@ -29,9 +29,7 @@ class NewDeviceCreator {
         onResult: (Boolean) -> Unit,
     ) {
         // can comment this in production
-        deviceInfoUtils.saveFcmToken()
         getShopIdFromIntent(extras)
-        deviceInfoUtils.saveImei()
         val newDevice = createNewDevice(context)
         Log.i(TAG, "saveDevice: ${newDevice.imeiOne}")
 //        if (newDevice.imeiOne == ClientSharedPrefs.IMEI_NOT_FOUND || newDevice.imeiOne.isBlank()) {

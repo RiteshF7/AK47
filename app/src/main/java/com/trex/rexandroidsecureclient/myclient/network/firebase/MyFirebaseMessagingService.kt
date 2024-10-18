@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexandroidsecureclient.utils.ClientSharedPrefs
+import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexcommon.data.DeviceActionsMapper
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -27,10 +27,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
 
         try {
-            val payload = remoteMessage.data;
+            val payload = remoteMessage.data
             Log.i("PayloadHandler", "Payload: $payload")
             handlePayload(payload)
-
         } finally {
             wakeLock.release()
         }
@@ -57,8 +56,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        val clientPref = ClientSharedPrefs()
-        clientPref.saveFcmToken(token)
+        CommonConstants.fcmToken = token
     }
 
     private fun startForegroundService() {

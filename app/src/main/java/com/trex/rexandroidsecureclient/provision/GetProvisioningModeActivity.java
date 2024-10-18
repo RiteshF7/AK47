@@ -18,10 +18,12 @@ package com.trex.rexandroidsecureclient.provision;
 
 import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ALLOWED_PROVISIONING_MODES;
 import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_MODE;
+import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED;
 import static android.app.admin.DevicePolicyManager.PROVISIONING_MODE_FULLY_MANAGED_DEVICE;
 import static android.app.admin.DevicePolicyManager.PROVISIONING_MODE_MANAGED_PROFILE;
 import static android.app.admin.DevicePolicyManager.PROVISIONING_MODE_MANAGED_PROFILE_ON_PERSONAL_DEVICE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -30,7 +32,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.core.app.ActivityCompat;
+
 import com.trex.rexandroidsecureclient.R;
+
 import java.util.ArrayList;
 
 /**
@@ -40,100 +46,103 @@ import java.util.ArrayList;
 @SuppressLint("NewApi")
 public class GetProvisioningModeActivity extends Activity {
 
-  private static final String TAG = GetProvisioningModeActivity.class.getSimpleName();
+    private static final String TAG = GetProvisioningModeActivity.class.getSimpleName();
 
-  @Override
-  public void onCreate(Bundle icicle) {
-    super.onCreate(icicle);
 
-    if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
-      Log.i(TAG, "Automatically provisioning device owner");
-      onDoButtonClick(null);
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+
+        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
+            Log.i(TAG, "Automatically provisioning device owner");
+            onDoButtonClick(null);
+        }
+
+        setContentView(R.layout.activity_get_provisioning_mode);
+        final LinearLayout layout = findViewById(R.id.dpc_login);
+        showRelevantProvisioningOptions(layout);
     }
 
-    setContentView(R.layout.activity_get_provisioning_mode);
-    final LinearLayout layout = findViewById(R.id.dpc_login);
-    showRelevantProvisioningOptions(layout);
-  }
-
-  @Override
-  public void onBackPressed() {
-    setResult(RESULT_CANCELED);
-    super.onBackPressed();
-  }
-
-  private void showRelevantProvisioningOptions(ViewGroup container) {
-    hideAllOptions(container);
-    hideDivider(container);
-    ArrayList<Integer> allowedProvisioningModes = getAllowedProvisioningModes();
-    if (containsDoOption(allowedProvisioningModes)) {
-      showDoOption(container);
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        super.onBackPressed();
     }
-    if (containsPoOption(allowedProvisioningModes)) {
-      if (containsDoOption(allowedProvisioningModes)) {
-        showDivider(container);
-      }
-      showPoOption(container);
+
+    private boolean checkPhonePermission() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PERMISSION_GRANT_STATE_GRANTED;
     }
-  }
 
-  private ArrayList<Integer> getAllowedProvisioningModes() {
-    ArrayList<Integer> allowedProvisioningModes =
-        getIntent().getIntegerArrayListExtra(EXTRA_PROVISIONING_ALLOWED_PROVISIONING_MODES);
-    if (allowedProvisioningModes == null || allowedProvisioningModes.isEmpty()) {
-      allowedProvisioningModes = new ArrayList<>();
-      allowedProvisioningModes.add(PROVISIONING_MODE_MANAGED_PROFILE);
-      allowedProvisioningModes.add(PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
+    private void showRelevantProvisioningOptions(ViewGroup container) {
+        hideAllOptions(container);
+        hideDivider(container);
+        ArrayList<Integer> allowedProvisioningModes = getAllowedProvisioningModes();
+        if (containsDoOption(allowedProvisioningModes)) {
+            showDoOption(container);
+        }
+        if (containsPoOption(allowedProvisioningModes)) {
+            if (containsDoOption(allowedProvisioningModes)) {
+                showDivider(container);
+            }
+            showPoOption(container);
+        }
     }
-    return allowedProvisioningModes;
-  }
 
-  private boolean containsDoOption(ArrayList<Integer> allowedProvisioningModes) {
-    return allowedProvisioningModes.contains(PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
-  }
+    private ArrayList<Integer> getAllowedProvisioningModes() {
+        ArrayList<Integer> allowedProvisioningModes = getIntent().getIntegerArrayListExtra(EXTRA_PROVISIONING_ALLOWED_PROVISIONING_MODES);
+        if (allowedProvisioningModes == null || allowedProvisioningModes.isEmpty()) {
+            allowedProvisioningModes = new ArrayList<>();
+            allowedProvisioningModes.add(PROVISIONING_MODE_MANAGED_PROFILE);
+            allowedProvisioningModes.add(PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
+        }
+        return allowedProvisioningModes;
+    }
 
-  private boolean containsPoOption(ArrayList<Integer> allowedProvisioningModes) {
-    return allowedProvisioningModes.contains(PROVISIONING_MODE_MANAGED_PROFILE)
-        || allowedProvisioningModes.contains(PROVISIONING_MODE_MANAGED_PROFILE_ON_PERSONAL_DEVICE);
-  }
+    private boolean containsDoOption(ArrayList<Integer> allowedProvisioningModes) {
+        return allowedProvisioningModes.contains(PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
+    }
 
-  private void hideAllOptions(ViewGroup container) {
-    container.findViewById(R.id.po_option).setVisibility(View.GONE);
-    container.findViewById(R.id.do_option).setVisibility(View.GONE);
-  }
+    private boolean containsPoOption(ArrayList<Integer> allowedProvisioningModes) {
+        return allowedProvisioningModes.contains(PROVISIONING_MODE_MANAGED_PROFILE) || allowedProvisioningModes.contains(PROVISIONING_MODE_MANAGED_PROFILE_ON_PERSONAL_DEVICE);
+    }
 
-  private void hideDivider(ViewGroup container) {
-    container.findViewById(R.id.divider).setVisibility(View.GONE);
-  }
+    private void hideAllOptions(ViewGroup container) {
+        container.findViewById(R.id.po_option).setVisibility(View.GONE);
+        container.findViewById(R.id.do_option).setVisibility(View.GONE);
+    }
 
-  private void showPoOption(ViewGroup container) {
-    container.findViewById(R.id.po_option).setVisibility(View.VISIBLE);
-    container.findViewById(R.id.po_selection_button).setOnClickListener(this::onPoButtonClick);
-  }
+    private void hideDivider(ViewGroup container) {
+        container.findViewById(R.id.divider).setVisibility(View.GONE);
+    }
 
-  private void showDoOption(ViewGroup container) {
-    container.findViewById(R.id.do_option).setVisibility(View.VISIBLE);
-    container.findViewById(R.id.do_selection_button).setOnClickListener(this::onDoButtonClick);
-  }
+    private void showPoOption(ViewGroup container) {
+        container.findViewById(R.id.po_option).setVisibility(View.VISIBLE);
+        container.findViewById(R.id.po_selection_button).setOnClickListener(this::onPoButtonClick);
+    }
 
-  private void showDivider(ViewGroup container) {
-    container.findViewById(R.id.divider).setVisibility(View.VISIBLE);
-  }
+    private void showDoOption(ViewGroup container) {
+        container.findViewById(R.id.do_option).setVisibility(View.VISIBLE);
+        container.findViewById(R.id.do_selection_button).setOnClickListener(this::onDoButtonClick);
+    }
 
-  private void onDoButtonClick(View button) {
-    final Intent intent = new Intent();
-    intent.putExtra(EXTRA_PROVISIONING_MODE, PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
-    finishWithIntent(intent);
-  }
+    private void showDivider(ViewGroup container) {
+        container.findViewById(R.id.divider).setVisibility(View.VISIBLE);
+    }
 
-  private void onPoButtonClick(View button) {
-    final Intent intent = new Intent();
-    intent.putExtra(EXTRA_PROVISIONING_MODE, PROVISIONING_MODE_MANAGED_PROFILE);
-    finishWithIntent(intent);
-  }
+    private void onDoButtonClick(View button) {
+        final Intent intent = new Intent();
+        intent.putExtra(EXTRA_PROVISIONING_MODE, PROVISIONING_MODE_FULLY_MANAGED_DEVICE);
+        finishWithIntent(intent);
+    }
 
-  private void finishWithIntent(Intent intent) {
-    setResult(RESULT_OK, intent);
-    finish();
-  }
+    private void onPoButtonClick(View button) {
+        final Intent intent = new Intent();
+        intent.putExtra(EXTRA_PROVISIONING_MODE, PROVISIONING_MODE_MANAGED_PROFILE);
+        finishWithIntent(intent);
+    }
+
+    private void finishWithIntent(Intent intent) {
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 }

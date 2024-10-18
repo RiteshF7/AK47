@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.os.Build
-import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 
@@ -15,6 +14,7 @@ class MyApplication : Application() {
         private var instance: MyApplication? = null
         const val TAG = "APPLICATION CLASS"
 
+        @JvmStatic
         fun getAppContext(): Context =
             instance?.applicationContext
                 ?: throw IllegalStateException("Application not initialized")

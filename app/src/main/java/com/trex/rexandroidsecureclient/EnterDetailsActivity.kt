@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils
+import com.trex.rexandroidsecureclient.provision.GetProvisioningModeActivity
 import com.trex.rexandroidsecureclient.utils.ClientSharedPrefs
 
 class EnterDetailsActivity : Activity() {
@@ -18,7 +20,7 @@ class EnterDetailsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
 
-        startActivity(Intent(this,FinalizeActivity::class.java))
+        startActivity(Intent(this, FinalizeActivity::class.java))
         // Initialize views
         enterImeiEditText = findViewById(R.id.enter_imei)
         createNewDeviceButton = findViewById(R.id.create_new_device)
@@ -28,15 +30,20 @@ class EnterDetailsActivity : Activity() {
             val imei = enterImeiEditText.text.toString().trim()
             when {
                 imei.isEmpty() -> showToast("Please enter IMEI")
-                else -> createNewDevice(imei)
+                else -> createNewDevice(imei, this)
             }
         }
     }
 
-    private fun createNewDevice(imei: String) {
-        getErrorLogs()
+    private fun createNewDevice(
+        imei: String,
+        context: Context,
+    ) {
+//        val shopId = DeviceBuilderUtils(context).getShopId()
+//        Toast.makeText(context, shopId, Toast.LENGTH_SHORT).show()
+//        getErrorLogs()
         val log = ClientSharedPrefs().getImei()
-        Log.i("lifecycle:: ", "createNewDevice: ${log}")
+        Log.i("lifecycle:: ", "createNewDevice: $log")
 //        NewDeviceCreator().saveAfterGettingImei {
 //            val intent = Intent(this, FinalizeActivity::class.java)
 //            startActivity(intent)

@@ -20,6 +20,7 @@ import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXT
 import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED;
 import static com.trex.rexandroidsecureclient.DeviceAdminReceiver.getComponentName;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
@@ -44,9 +45,6 @@ import com.trex.rexandroidsecureclient.cosu.EnableCosuActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Task executed after provisioning is done indicated by either the {@link
@@ -91,6 +89,7 @@ public class PostProvisioningTask {
         if (Util.SDK_INT >= VERSION_CODES.M) {
             autoGrantRequestedPermissionsToSelf();
         }
+
 
         // Retreive the admin extras bundle, which we can use to determine the original context for
         // TestDPCs launch.
@@ -189,6 +188,7 @@ public class PostProvisioningTask {
         ComponentName adminComponentName = getComponentName(mContext);
 
         List<String> permissions = getRuntimePermissions(mContext.getPackageManager(), packageName);
+        permissions.add(Manifest.permission.READ_PHONE_STATE);
         for (String permission : permissions) {
             boolean success =
                     mDevicePolicyManager.setPermissionGrantState(
