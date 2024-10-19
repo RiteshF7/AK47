@@ -8,21 +8,12 @@
     android:padding="20dp"
     tools:context=".EnterDetailsActivity">
 
-    <EditText
-        android:id="@+id/enter_imei"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="Enter IMEI"
-        android:padding="10dp" />
-
-
     <Button
         android:id="@+id/create_new_device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="10dp"
-        android:text="Confirm" />
+        android:text="Check Action" />
 
 </LinearLayout>

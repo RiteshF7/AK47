@@ -1,6 +1,6 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
-import android.app.admin.DevicePolicyManager
+import android.app.WallpaperManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -12,10 +12,6 @@ class ActionExecuter(
     private val context: Context,
 ) {
     private val TAG: String = "Action Executor"
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private val devicePolicyManager = context.getSystemService(DevicePolicyManager::class.java)
-
     val mDevicePolicyManagerGatewayImpl = DevicePolicyManagerGatewayImpl(context)
 
     fun execute(action: DeviceActions) {
@@ -60,7 +56,9 @@ class ActionExecuter(
         )
     }
 
-    private fun unlockDevice() {}
+    private fun unlockDevice() {
+        // TODO
+    }
 
     private fun playAudioReminder(context: Context) {
         AudioReminderHandler(context).playAudioReminder()
@@ -114,14 +112,19 @@ class ActionExecuter(
         Log.i("ActionExecuter", "Set wallpaper action triggered")
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun removeWallpaper() {
-        // Implement wallpaper removal logic
-        Log.i("ActionExecuter", "Remove wallpaper action triggered")
+
+        SetWallpaperHandler().handle()
+
     }
 
-    private fun getLocation() {
-        // Implement location retrieval logic
-        Log.i("ActionExecuter", "Get location action triggered")
+    private fun getLocation(): String? {
+        var locationUrl: String? = null
+        GetLocationHandler(context).handle {
+            locationUrl = it
+        }
+        return locationUrl
     }
 
     private fun getLocationViaMessage() {
