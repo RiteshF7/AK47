@@ -10,6 +10,7 @@ class AudioReminderHandler(
     private var mediaPlayer: MediaPlayer? = null
 
     fun playAudioReminder() {
+        //TODO set volume to full
         // Release any existing media player instance
         mediaPlayer?.release()
 

@@ -56,7 +56,7 @@ public class FinalizeActivity extends Activity {
         }
         setContentView(R.layout.finalize_activity);
         deviceBuilderUtils = new DeviceBuilderUtils(this);
-        deviceBuilderUtils.saveShopId("+919910000165");
+        deviceBuilderUtils.saveShopId("+919910000163");
 
         createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);
@@ -87,6 +87,10 @@ public class FinalizeActivity extends Activity {
                 return null;
             });
         });
+
+        //try to find shop id from intent
+        //on back pressed on finilized and error case
+        // try locking and unlocking device onw complete flow after provisioning
 
 
 //        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {

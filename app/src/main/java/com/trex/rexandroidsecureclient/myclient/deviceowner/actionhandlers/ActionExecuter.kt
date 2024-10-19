@@ -1,18 +1,22 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
-import TelephonyHelper
 import android.app.admin.DevicePolicyManager
 import android.content.Context
+import android.os.Build
 import android.util.Log
-import com.trex.rexandroidsecureclient.MyApplication
+import androidx.annotation.RequiresApi
+import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexcommon.data.DeviceActions
 
 class ActionExecuter(
     private val context: Context,
 ) {
-    private val isDeviceOwner = MyApplication.isDeviceOwner()
-    private val devicePolicyManager: DevicePolicyManager = MyApplication.getDevicePolicyManager()
-    private val telephonyHelper = TelephonyHelper(context)
+    private val TAG: String = "Action Executor"
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private val devicePolicyManager = context.getSystemService(DevicePolicyManager::class.java)
+
+    val mDevicePolicyManagerGatewayImpl = DevicePolicyManagerGatewayImpl(context)
 
     fun execute(action: DeviceActions) {
 //        if (!isDeviceOwner) return
@@ -50,15 +54,13 @@ class ActionExecuter(
     }
 
     private fun lockDevice() {
-        devicePolicyManager.lockNow()
+        mDevicePolicyManagerGatewayImpl.lockNow(
+            { Log.i("", "lockDevice: Device locked successfully!") },
+            { e -> Log.e("ActionExecuterError", "execute: ${e.message}") },
+        )
     }
 
-    private fun unlockDevice() {
-        // Note: Direct unlocking is not possible through DevicePolicyManager
-        // You might need to reset the password to a known value
-        UnlockDeviceHandler().handle()
-        Log.i("ActionExecuter", "Unlock device action triggered")
-    }
+    private fun unlockDevice() {}
 
     private fun playAudioReminder(context: Context) {
         AudioReminderHandler(context).playAudioReminder()
@@ -70,9 +72,7 @@ class ActionExecuter(
         Log.i("ActionExecuter", "Show screen reminder action triggered")
     }
 
-    private fun getPhoneNumber(): String?  {
-        return null
-    }
+    private fun getPhoneNumber(): String = ""
 
     private fun getContacts() {
         Log.i("ActionExecuter", "Get contacts action triggered")
@@ -94,11 +94,19 @@ class ActionExecuter(
     }
 
     private fun cameraLock() {
-        devicePolicyManager.setCameraDisabled(null, true)
+        mDevicePolicyManagerGatewayImpl.setCameraDisabled(true, {
+            Log.i(TAG, "cameraLock: Success")
+        }, {
+            Log.e(TAG, "cameraLock: Error")
+        })
     }
 
     private fun cameraUnlock() {
-        devicePolicyManager.setCameraDisabled(null, false)
+        mDevicePolicyManagerGatewayImpl.setCameraDisabled(false, {
+            Log.i(TAG, "cameraUnlock: Success")
+        }, {
+            Log.e(TAG, "cameraUnlock: Error")
+        })
     }
 
     private fun setWallpaper() {
@@ -137,7 +145,6 @@ class ActionExecuter(
     }
 
     private fun resetPassword(newPassword: String) {
-        devicePolicyManager.resetPassword(newPassword, 0)
     }
 
     private fun reactivateDevice() {
