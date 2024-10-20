@@ -78,6 +78,9 @@
         android:usesCleartextTraffic="true"
         tools:remove="android:appComponentFactory">
         <activity
+            android:name=".myclient.ui.lockappscreen.LockAppActivity"
+            android:exported="false" />
+        <activity
             android:name=".EnterDetailsActivity"
             android:exported="false" />
 

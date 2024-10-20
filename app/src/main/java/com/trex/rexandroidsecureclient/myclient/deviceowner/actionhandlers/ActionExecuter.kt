@@ -1,17 +1,21 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
-import android.os.Build
+import android.content.Intent
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
+import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
 import com.trex.rexcommon.data.DeviceActions
 
 class ActionExecuter(
     private val context: Context,
 ) {
     private val TAG: String = "Action Executor"
-    val mDevicePolicyManagerGatewayImpl = DevicePolicyManagerGatewayImpl(context)
+
+    private val mDevicePolicyManagerGateway: DevicePolicyManagerGatewayImpl =
+        DevicePolicyManagerGatewayImpl(
+            context,
+        )
 
     fun execute(action: DeviceActions) {
 //        if (!isDeviceOwner) return
@@ -49,14 +53,17 @@ class ActionExecuter(
     }
 
     private fun lockDevice() {
-        mDevicePolicyManagerGatewayImpl.lockNow(
-            { Log.i("", "lockDevice: Device locked successfully!") },
-            { e -> Log.e("ActionExecuterError", "execute: ${e.message}") },
-        )
+        mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
+            val kioskIntent = Intent(context, LockAppActivity::class.java)
+            kioskIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            context.startActivity(kioskIntent)
+            Log.i(TAG, "lockDevice: Success")
+        }, { error ->
+            Log.i(TAG, "lockDevice: error :: ${error.message}")
+        })
     }
 
     private fun unlockDevice() {
-        // TODO
     }
 
     private fun playAudioReminder(context: Context) {
@@ -91,7 +98,7 @@ class ActionExecuter(
     }
 
     private fun cameraLock() {
-        mDevicePolicyManagerGatewayImpl.setCameraDisabled(true, {
+        mDevicePolicyManagerGateway.setCameraDisabled(true, {
             Log.i(TAG, "cameraLock: Success")
         }, {
             Log.e(TAG, "cameraLock: Error")
@@ -99,7 +106,7 @@ class ActionExecuter(
     }
 
     private fun cameraUnlock() {
-        mDevicePolicyManagerGatewayImpl.setCameraDisabled(false, {
+        mDevicePolicyManagerGateway.setCameraDisabled(false, {
             Log.i(TAG, "cameraUnlock: Success")
         }, {
             Log.e(TAG, "cameraUnlock: Error")
@@ -128,8 +135,12 @@ class ActionExecuter(
     }
 
     private fun rebootDevice() {
-//        devicePolicyManager.reboot()
-        Log.i("ActionExecuter", "REboot device")
+        mDevicePolicyManagerGateway.reboot(
+            {
+                Log.i(TAG, "rebootDevice: rebooting!")
+            },
+            { error -> Log.i(TAG, "rebootDevice: ${error.message}") },
+        )
     }
 
     private fun callLock() {
