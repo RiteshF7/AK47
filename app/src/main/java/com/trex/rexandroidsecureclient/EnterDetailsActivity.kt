@@ -20,7 +20,7 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            ActionExecuter(this).execute(DeviceActions.ACTION_EMI_AUDIO_REMINDER)
+            ActionExecuter(this).execute(DeviceActions.ACTION_EMI_SCREEN_REMINDER)
         }
     }
 

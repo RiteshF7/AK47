@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
+import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
 import com.trex.rexcommon.data.DeviceActions
 
@@ -74,8 +75,9 @@ class ActionExecuter(
     }
 
     private fun showScreenReminder() {
-        // Implement screen reminder logic
-        Log.i("ActionExecuter", "Show screen reminder action triggered")
+        val emiReminderActivity = Intent(context, EmiReminderActivity::class.java)
+        emiReminderActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        context.startActivity(emiReminderActivity)
     }
 
     private fun getPhoneNumber(): String = ""
