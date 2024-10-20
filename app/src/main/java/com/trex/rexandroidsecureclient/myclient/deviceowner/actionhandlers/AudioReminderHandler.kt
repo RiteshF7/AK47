@@ -1,7 +1,9 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
+import android.media.AudioManager
 import android.media.MediaPlayer
+import com.trex.rexandroidsecureclient.MyApplication
 import com.trex.rexandroidsecureclient.R
 
 class AudioReminderHandler(
@@ -10,15 +12,22 @@ class AudioReminderHandler(
     private var mediaPlayer: MediaPlayer? = null
 
     fun playAudioReminder() {
-        //TODO set volume to full
         // Release any existing media player instance
         mediaPlayer?.release()
+        mediaPlayer = MediaPlayer()
+        mediaPlayer = MediaPlayer.create(MyApplication.getAppContext(), R.raw.my_audio)
 
-        // Initialize and play audio
-        mediaPlayer = MediaPlayer.create(context, R.raw.my_audio)
-        mediaPlayer?.start()
+        mediaPlayer?.setOnPreparedListener {
+            // Increase volume to maximum
+            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0,
+            )
+            it.start()
+        }
 
-        // Release the player after completion
         mediaPlayer?.setOnCompletionListener {
             it.release()
         }
