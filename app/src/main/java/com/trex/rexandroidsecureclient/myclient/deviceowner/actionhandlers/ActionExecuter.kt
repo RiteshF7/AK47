@@ -64,6 +64,8 @@ class ActionExecuter(
     }
 
     private fun unlockDevice() {
+        val stopLockTaskIntent = Intent(LockAppActivity.STOP_LOCK_TASK)
+        context.sendBroadcast(stopLockTaskIntent)
     }
 
     private fun playAudioReminder(context: Context) {
