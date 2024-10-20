@@ -1,6 +1,5 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
-import android.app.WallpaperManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -107,16 +106,14 @@ class ActionExecuter(
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setWallpaper() {
-        // Implement wallpaper setting logic
-        Log.i("ActionExecuter", "Set wallpaper action triggered")
+        SetWallpaperHandler(context).handle()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun removeWallpaper() {
-
-        SetWallpaperHandler().handle()
-
+        RemoveWallpaperHandler(context).handle()
     }
 
     private fun getLocation(): String? {

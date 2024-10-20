@@ -20,7 +20,7 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            ActionExecuter(this).execute(DeviceActions.ACTION_REMOVE_WALLPAPER)
+            ActionExecuter(this).execute(DeviceActions.ACTION_SET_WALLPAPER)
         }
     }
 
