@@ -12,7 +12,6 @@ class SetWallpaperHandler(
 ) {
     private val bitmapHelper = BitmapHelper(context)
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun handle() {
         try {
             val blackBitmap = bitmapHelper.getBlackBitmap()

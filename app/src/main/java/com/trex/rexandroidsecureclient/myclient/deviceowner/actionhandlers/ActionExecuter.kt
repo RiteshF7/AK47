@@ -106,12 +106,10 @@ class ActionExecuter(
         })
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun setWallpaper() {
         SetWallpaperHandler(context).handle()
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun removeWallpaper() {
         RemoveWallpaperHandler(context).handle()
     }
