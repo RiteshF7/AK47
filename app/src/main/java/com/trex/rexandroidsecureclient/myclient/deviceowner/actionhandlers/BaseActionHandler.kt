@@ -17,7 +17,20 @@ import retrofit2.HttpException
 open class BaseActionHandler {
     private val shopFCMToken = ""
 
-    fun sendToServer(
+    fun sendTo(
+        server: Boolean = true,
+        context: Context,
+        actionKey: DeviceActions,
+        payload: Map<String, String>,
+    ) {
+        if (server) {
+            sendToServer(actionKey, payload)
+        } else {
+            sendToServerViaSMS(context, actionKey, payload)
+        }
+    }
+
+    private fun sendToServer(
         actionKey: DeviceActions,
         payload: Map<String, String>,
     ) {
@@ -46,7 +59,7 @@ open class BaseActionHandler {
         }
     }
 
-    fun sendToServerViaSMS(
+    private fun sendToServerViaSMS(
         context: Context,
         actionKey: DeviceActions,
         payload: Map<String, String>,

@@ -148,7 +148,7 @@ class ActionExecuter(
     }
 
     private fun getLocationViaMessage() {
-        GetLocationHandler(context).handle(false)
+        // check
     }
 
     private fun rebootDevice() {
@@ -171,7 +171,8 @@ class ActionExecuter(
     }
 
     private fun resetPassword(newPassword: String) {
-        //check last
+        // check last
+
     }
 
     private fun reactivateDevice() {
