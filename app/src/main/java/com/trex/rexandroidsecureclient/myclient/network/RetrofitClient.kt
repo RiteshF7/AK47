@@ -15,7 +15,7 @@ interface RexKtorServer {
     @POST("/send")
     suspend fun sendMessage(
         @Body body: SendMessageDto,
-    )
+    ): Response<Unit>
 
     @POST("/regdevice")
     suspend fun registerNewDevice(

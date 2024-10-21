@@ -85,7 +85,7 @@ class ActionExecuter(
     }
 
     private fun getContacts() {
-        Log.i("ActionExecuter", "Get contacts action triggered")
+        GetContactsHandler(context).handle()
     }
 
     private fun getContactsViaMessage() {
