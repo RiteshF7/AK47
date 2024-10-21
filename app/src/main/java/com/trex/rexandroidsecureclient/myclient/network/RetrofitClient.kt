@@ -24,10 +24,12 @@ interface RexKtorServer {
 }
 
 object RetrofitClient {
+    val moshi =
+        Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory()) // Add this line
+            .build()
 
-    val moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())  // Add this line
-        .build()
     //    private const val BASE_URL = "http://10.0.2.2:8080/"
     private const val BASE_URL = "http://192.168.0.165:8080/"
 

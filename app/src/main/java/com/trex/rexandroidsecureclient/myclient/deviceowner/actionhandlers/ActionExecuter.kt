@@ -25,7 +25,7 @@ class ActionExecuter(
             when (action) {
                 DeviceActions.ACTION_LOCK_DEVICE -> lockDevice()
                 DeviceActions.ACTION_UNLOCK_DEVICE -> unlockDevice()
-                DeviceActions.ACTION_EMI_AUDIO_REMINDER -> playAudioReminder(context)
+                DeviceActions.ACTION_EMI_AUDIO_REMINDER -> playAudioReminder()
                 DeviceActions.ACTION_EMI_SCREEN_REMINDER -> showScreenReminder()
                 DeviceActions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
                 DeviceActions.ACTION_GET_CONTACTS -> getContacts()
@@ -69,7 +69,7 @@ class ActionExecuter(
         context.sendBroadcast(stopLockTaskIntent)
     }
 
-    private fun playAudioReminder(context: Context) {
+    private fun playAudioReminder() {
         AudioReminderHandler(context).playAudioReminder()
         Log.i("ActionExecuter", "Play audio reminder action triggered")
     }
@@ -80,7 +80,9 @@ class ActionExecuter(
         context.startActivity(emiReminderActivity)
     }
 
-    private fun getPhoneNumber(): String = ""
+    private fun getPhoneNumber() {
+        GetPhoneNumberHandler(context).handle()
+    }
 
     private fun getContacts() {
         Log.i("ActionExecuter", "Get contacts action triggered")
