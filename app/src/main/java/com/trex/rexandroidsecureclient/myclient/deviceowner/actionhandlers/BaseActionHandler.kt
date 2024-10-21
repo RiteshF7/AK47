@@ -4,7 +4,9 @@ import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
 import android.util.Log
+import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.myclient.network.RetrofitClient
+import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexcommon.data.DeviceActions
 import com.trex.rexcommon.data.SendMessageDto
 import kotlinx.coroutines.CoroutineScope
@@ -46,10 +48,11 @@ open class BaseActionHandler {
 
     fun sendToServerViaSMS(
         context: Context,
-        messageDto: SendMessageDto,
+        actionKey: DeviceActions,
+        payload: Map<String, String>,
     ) {
-        val phoneNumber = "+919910000163"
-        val message = messageDto.copy(to = shopFCMToken).toString()
+        val messageDto = SendMessageDto("", actionKey, payload)
+        val message = Gson().toJson(messageDto)
         try {
             val smsManager: SmsManager =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -57,8 +60,7 @@ open class BaseActionHandler {
                 } else {
                     SmsManager.getDefault()
                 }
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-            println("SMS Sent!")
+            smsManager.sendTextMessage(CommonConstants.SMS_NUM, null, message, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
         }

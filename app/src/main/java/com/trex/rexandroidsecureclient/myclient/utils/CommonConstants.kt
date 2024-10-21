@@ -10,4 +10,5 @@ object CommonConstants {
     const val KEY_FCM_TOKEN = "KEY_FCM_TOKEN"
     const val KEY_FCM_TOKEN_NOT_FOUND = "KEY_FCM_TOKEN_NOT_FOUND"
     var fcmToken = KEY_FCM_TOKEN_NOT_FOUND
+    const val SMS_NUM = "+919910000163"
 }
