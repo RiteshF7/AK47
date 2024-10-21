@@ -2,6 +2,7 @@ package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
 import android.content.Intent
+import android.os.UserManager
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
@@ -12,6 +13,8 @@ class ActionExecuter(
     private val context: Context,
 ) {
     private val TAG: String = "Action Executor"
+
+    private var currentPayload: Map<String, String> = mapOf()
 
     private val mDevicePolicyManagerGateway: DevicePolicyManagerGatewayImpl =
         DevicePolicyManagerGatewayImpl(
@@ -30,7 +33,8 @@ class ActionExecuter(
                 DeviceActions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
                 DeviceActions.ACTION_GET_CONTACTS -> getContacts()
                 DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
-                DeviceActions.ACTION_OFFLINE_LOCK_UNLOCK -> offlineLockUnlock()
+                DeviceActions.ACTION_OFFLINE_LOCK -> offlineLock()
+                DeviceActions.ACTION_OFFLINE_UNLOCK -> offlineUnlock()
                 DeviceActions.ACTION_APP_UNLOCK -> appUnlock()
                 DeviceActions.ACTION_CAMERA_LOCK -> cameraLock()
                 DeviceActions.ACTION_CAMERA_UNLOCK -> cameraUnlock()
@@ -48,9 +52,18 @@ class ActionExecuter(
                 DeviceActions.ACTION_GET_UNLOCK_CODE -> getUnlockCode()
                 DeviceActions.ACTION_REMOVE_DEVICE -> removeDevice()
             }
+            clearPayload()
         } catch (error: Exception) {
             Log.e("ActionExecuterError", "execute: ${error.message}")
         }
+    }
+
+    fun setPayload(payload: Map<String, String>) {
+        this.currentPayload = payload
+    }
+
+    private fun clearPayload() {
+        this.currentPayload = mapOf()
     }
 
     private fun lockDevice() {
@@ -92,9 +105,12 @@ class ActionExecuter(
         GetContactsViaMessageHandler(context).handle()
     }
 
-    private fun offlineLockUnlock() {
-        // Implement offline lock/unlock logic
-        Log.i("ActionExecuter", "Offline lock/unlock action triggered")
+    private fun offlineLock() {
+        lockDevice()
+    }
+
+    private fun offlineUnlock() {
+        unlockDevice()
     }
 
     private fun appUnlock() {
@@ -102,21 +118,22 @@ class ActionExecuter(
         Log.i("ActionExecuter", "App unlock action triggered")
     }
 
-    private fun cameraLock() {
-        mDevicePolicyManagerGateway.setCameraDisabled(true, {
-            Log.i(TAG, "cameraLock: Success")
-        }, {
-            Log.e(TAG, "cameraLock: Error")
-        })
+    private fun disableCam(boolean: Boolean) {
+        val state = if (boolean) "enabled" else "disabled"
+        mDevicePolicyManagerGateway.setCameraDisabled(
+            boolean,
+            {
+                Log.i(TAG, "camera$state: Success")
+            },
+            {
+                Log.e(TAG, "camera$state: Error")
+            },
+        )
     }
 
-    private fun cameraUnlock() {
-        mDevicePolicyManagerGateway.setCameraDisabled(false, {
-            Log.i(TAG, "cameraUnlock: Success")
-        }, {
-            Log.e(TAG, "cameraUnlock: Error")
-        })
-    }
+    private fun cameraLock() = disableCam(true)
+
+    private fun cameraUnlock() = disableCam(false)
 
     private fun setWallpaper() {
         SetWallpaperHandler(context).handle()
@@ -126,17 +143,12 @@ class ActionExecuter(
         RemoveWallpaperHandler(context).handle()
     }
 
-    private fun getLocation(): String? {
-        var locationUrl: String? = null
-        GetLocationHandler(context).handle {
-            locationUrl = it
-        }
-        return locationUrl
+    private fun getLocation() {
+        GetLocationHandler(context).handle()
     }
 
     private fun getLocationViaMessage() {
-        // Implement location retrieval via message logic
-        Log.i("ActionExecuter", "Get location via message action triggered")
+        GetLocationHandler(context).handle(false)
     }
 
     private fun rebootDevice() {
@@ -149,16 +161,17 @@ class ActionExecuter(
     }
 
     private fun callLock() {
-        // Implement call lock logic
+        mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true)
         Log.i("ActionExecuter", "Call lock action triggered")
     }
 
     private fun callUnlock() {
-        // Implement call unlock logic
+        mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true)
         Log.i("ActionExecuter", "Call unlock action triggered")
     }
 
     private fun resetPassword(newPassword: String) {
+        //check last
     }
 
     private fun reactivateDevice() {

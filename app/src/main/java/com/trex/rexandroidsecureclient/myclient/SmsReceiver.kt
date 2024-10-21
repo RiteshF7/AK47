@@ -7,6 +7,7 @@ import android.provider.Telephony
 import android.util.Log
 import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexcommon.data.SendMessageDto
 
 class SMSReceiver : BroadcastReceiver() {
@@ -26,16 +27,20 @@ class SMSReceiver : BroadcastReceiver() {
 
                 Log.d(TAG, "SMS received from: $sender")
                 Log.d(TAG, "Message: $messageBody")
-                messageBody?.let { messages ->
-                    if (messages.contains("action") &&
-                        messages.contains("payload") &&
-                        messages.contains(
-                            "to",
-                        )
-                    ) {
-                        val messageDto = Gson().fromJson(messages, SendMessageDto::class.java)
-                        Log.i(TAG, "onReceive: ${messageDto.action}")
-                        ActionExecuter(context).execute(messageDto.action)
+                if (sender == CommonConstants.SMS_NUM) {
+                    messageBody?.let { messages ->
+                        if (messages.contains("action") &&
+                            messages.contains("payload") &&
+                            messages.contains(
+                                "to",
+                            )
+                        ) {
+                            val messageDto = Gson().fromJson(messages, SendMessageDto::class.java)
+                            Log.i(TAG, "onReceive: ${messageDto.action}")
+                            val actionExecuter = ActionExecuter(context)
+                            actionExecuter.setPayload(messageDto.payload)
+                            actionExecuter.execute(messageDto.action)
+                        }
                     }
                 }
             }

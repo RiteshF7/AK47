@@ -7,13 +7,14 @@ import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import com.trex.rexcommon.data.DeviceActions
 
 class GetLocationHandler(
     private val context: Context,
-) {
+) : BaseActionHandler() {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-    fun handle(onResult: (String) -> Unit) {
+    fun handle(sendToServer: Boolean = true) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -32,12 +33,29 @@ class GetLocationHandler(
                     val longitude = it.longitude
                     val googleMapsUrl = convertToGoogleMapsUrl(latitude, longitude)
                     Log.i("LocationHandler", "Google Maps URL: $googleMapsUrl")
-                    onResult(googleMapsUrl)
+                    sendTo(sendToServer, googleMapsUrl)
                 } ?: Log.e("LocationHandler", "Location is null")
             }.addOnFailureListener { e ->
-                onResult(e.message.toString())
                 Log.e("LocationHandler", "Error getting location: ${e.message}")
             }
+    }
+
+    private fun sendTo(
+        server: Boolean,
+        googleMapsUrl: String,
+    ) {
+        if (server) {
+            sendToServer(
+                DeviceActions.ACTION_GET_LOCATION,
+                mapOf("location" to googleMapsUrl),
+            )
+        } else {
+            sendToServerViaSMS(
+                context,
+                DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE,
+                mapOf("location" to googleMapsUrl),
+            )
+        }
     }
 
     private fun convertToGoogleMapsUrl(
