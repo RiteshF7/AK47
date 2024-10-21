@@ -7,14 +7,14 @@ import android.provider.ContactsContract
 import android.util.Log
 import com.trex.rexcommon.data.DeviceActions
 
-class GetContactsHandler(
+open class GetContactsHandler(
     private val context: Context,
 ) : BaseActionHandler() {
-    fun handle() {
+    open fun handle() {
         val contactsList = getAllContacts(context.contentResolver)
         val contactsString = contactsList.joinToString(",")
         val contactsPayload = mapOf("contacts" to contactsString)
-        Log.i("contacts list", "handle: ${contactsString}")
+        Log.i("contacts list", "handle: $contactsString")
         if (contactsList.isNotEmpty()) {
             sendToServer(
                 DeviceActions.ACTION_GET_CONTACTS,
@@ -25,7 +25,7 @@ class GetContactsHandler(
         }
     }
 
-    fun getAllContacts(contentResolver: ContentResolver): List<String> {
+    protected fun getAllContacts(contentResolver: ContentResolver): List<String> {
         val contactsList = mutableListOf<String>()
 
         val cursor: Cursor? =

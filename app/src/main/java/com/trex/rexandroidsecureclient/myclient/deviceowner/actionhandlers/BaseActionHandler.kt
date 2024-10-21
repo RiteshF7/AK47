@@ -49,7 +49,7 @@ open class BaseActionHandler {
         messageDto: SendMessageDto,
     ) {
         val phoneNumber = "+919910000163"
-        val message = messageDto.toString()
+        val message = messageDto.copy(to = shopFCMToken).toString()
         try {
             val smsManager: SmsManager =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

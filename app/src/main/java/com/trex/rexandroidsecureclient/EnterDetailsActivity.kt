@@ -20,7 +20,7 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            ActionExecuter(this).execute(DeviceActions.ACTION_GET_CONTACTS)
+            ActionExecuter(this).execute(DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE)
         }
     }
 

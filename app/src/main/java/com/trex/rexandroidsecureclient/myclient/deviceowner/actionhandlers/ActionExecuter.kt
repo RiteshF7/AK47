@@ -89,8 +89,7 @@ class ActionExecuter(
     }
 
     private fun getContactsViaMessage() {
-        // Implement contact retrieval via message logic
-        Log.i("ActionExecuter", "Get contacts via message action triggered")
+        GetContactsViaMessageHandler(context).handle()
     }
 
     private fun offlineLockUnlock() {
