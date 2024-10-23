@@ -7,14 +7,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 class LockAppActivity : Activity() {
     private val unlcokButton by lazy { findViewById<Button>(R.id.btnUnlock) }
@@ -43,7 +42,7 @@ class LockAppActivity : Activity() {
         this.startLockTask()
 
         unlcokButton.setOnClickListener {
-            ActionExecuter(this).execute(DeviceActions.ACTION_UNLOCK_DEVICE)
+            ActionExecuter(this).execute(Actions.ACTION_UNLOCK_DEVICE)
         }
     }
 

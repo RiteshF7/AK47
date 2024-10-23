@@ -6,8 +6,8 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.MyApplication
-import com.trex.rexandroidsecureclient.myclient.network.RetrofitClient
-import com.trex.rexcommon.data.NewDevice
+import com.trex.rexnetwork.RetrofitClient
+import com.trex.rexnetwork.data.NewDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,7 +102,7 @@ class NewDeviceCreator {
         onResult: (Response<Unit>) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val respose = RetrofitClient.builder.registerNewDevice(newDevice)
+            val respose = RetrofitClient.getBuilder.registerNewDevice(newDevice)
             onResult(respose)
         }
     }

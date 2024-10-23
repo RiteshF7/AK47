@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.util.Log
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 open class GetContactsHandler(
     private val context: Context,
@@ -17,7 +17,7 @@ open class GetContactsHandler(
         Log.i("contacts list", "handle: $contactsString")
         if (contactsList.isNotEmpty()) {
             sendToServer(
-                DeviceActions.ACTION_GET_CONTACTS,
+                Actions.ACTION_GET_CONTACTS,
                 contactsPayload,
             )
         } else {

@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
-import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
-import com.trex.rexcommon.data.SendMessageDto
+import com.trex.rexnetwork.data.ActionMessageDTOMapper
 
 class SMSReceiver : BroadcastReceiver() {
     companion object {
@@ -35,10 +34,9 @@ class SMSReceiver : BroadcastReceiver() {
                                 "to",
                             )
                         ) {
-                            val messageDto = Gson().fromJson(messages, SendMessageDto::class.java)
-                            Log.i(TAG, "onReceive: ${messageDto.action}")
+                            val messageDto = ActionMessageDTOMapper.fromJsonToDTO(messageBody)
+                            Log.i(TAG, "onReceive by sms :: ${messageDto.action}")
                             val actionExecuter = ActionExecuter(context)
-                            actionExecuter.setPayload(messageDto.payload)
                             actionExecuter.execute(messageDto.action)
                         }
                     }

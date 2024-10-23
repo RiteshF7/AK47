@@ -6,7 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.data.ActionMessageDTO
-import com.trex.rexnetwork.data.ActionMessageDTOFactory
+import com.trex.rexnetwork.data.ActionMessageDTOMapper
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 
 class PayloadReceiver : BroadcastReceiver() {
@@ -21,15 +21,16 @@ class PayloadReceiver : BroadcastReceiver() {
             logErrorMessage("message not found in payload!")
             return
         }
-        val actionMessageDTO = ActionMessageDTOFactory.fromJsonToDTO(actionMessageString)
+        val actionMessageDTO = ActionMessageDTOMapper.fromJsonToDTO(actionMessageString)
 
         if (actionMessageDTO == null) {
             logErrorMessage("unable to cast from string to dto using gson!")
             return
         }
 
-        Log.i("", "onReceive: ${actionMessageDTO.actions}")
-        ActionExecuter(context).execute(actionMessageDTO.actions)
+        Log.i("", "onReceive: ${actionMessageDTO.action}")
+        val actionExecuter = ActionExecuter(context)
+        actionExecuter.execute(actionMessageDTO.action)
 
         // try to send back to shop
         // make this receiver in both apps

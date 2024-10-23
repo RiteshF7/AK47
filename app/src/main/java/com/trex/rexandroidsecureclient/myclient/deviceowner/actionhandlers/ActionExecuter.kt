@@ -7,7 +7,7 @@ import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 class ActionExecuter(
     private val context: Context,
@@ -21,46 +21,46 @@ class ActionExecuter(
             context,
         )
 
-    fun execute(action: DeviceActions) {
-//        if (!isDeviceOwner) return
+    fun execute(
+        action: Actions,
+        payload: Map<String, String> = mapOf(),
+    ) {
+        this.currentPayload = payload
 
         try {
             when (action) {
-                DeviceActions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
-                DeviceActions.ACTION_GET_CONTACTS -> getContacts()
-                DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
-                DeviceActions.ACTION_GET_LOCATION -> getLocation()
-                DeviceActions.ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
-                DeviceActions.ACTION_GET_DEVICE_INFO -> getDeviceInfo()
-                DeviceActions.ACTION_GET_UNLOCK_CODE -> getUnlockCode()
-                DeviceActions.ACTION_LOCK_DEVICE -> lockDevice()
-                DeviceActions.ACTION_UNLOCK_DEVICE -> unlockDevice()
-                DeviceActions.ACTION_EMI_AUDIO_REMINDER -> playAudioReminder()
-                DeviceActions.ACTION_EMI_SCREEN_REMINDER -> showScreenReminder()
-                DeviceActions.ACTION_OFFLINE_LOCK -> offlineLock()
-                DeviceActions.ACTION_OFFLINE_UNLOCK -> offlineUnlock()
-                DeviceActions.ACTION_APP_UNLOCK -> appUnlock()
-                DeviceActions.ACTION_CAMERA_LOCK -> cameraLock()
-                DeviceActions.ACTION_CAMERA_UNLOCK -> cameraUnlock()
-                DeviceActions.ACTION_SET_WALLPAPER -> setWallpaper()
-                DeviceActions.ACTION_REMOVE_WALLPAPER -> removeWallpaper()
-                DeviceActions.ACTION_REBOOT_DEVICE -> rebootDevice()
-                DeviceActions.ACTION_CALL_LOCK -> callLock()
-                DeviceActions.ACTION_CALL_UNLOCK -> callUnlock()
-                DeviceActions.ACTION_RESET_PASSWORD -> resetPassword("000000")
-                DeviceActions.ACTION_REACTIVATE_DEVICE -> reactivateDevice()
-                DeviceActions.ACTION_DEACTIVATE_DEVICE -> deactivateDevice()
+                Actions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
+                Actions.ACTION_GET_CONTACTS -> getContacts()
+                Actions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
+                Actions.ACTION_GET_LOCATION -> getLocation()
+                Actions.ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
+                Actions.ACTION_GET_DEVICE_INFO -> getDeviceInfo()
+                Actions.ACTION_GET_UNLOCK_CODE -> getUnlockCode()
+                Actions.ACTION_LOCK_DEVICE -> lockDevice()
+                Actions.ACTION_UNLOCK_DEVICE -> unlockDevice()
+                Actions.ACTION_EMI_AUDIO_REMINDER -> playAudioReminder()
+                Actions.ACTION_EMI_SCREEN_REMINDER -> showScreenReminder()
+                Actions.ACTION_OFFLINE_LOCK -> offlineLock()
+                Actions.ACTION_OFFLINE_UNLOCK -> offlineUnlock()
+                Actions.ACTION_APP_UNLOCK -> appUnlock()
+                Actions.ACTION_CAMERA_LOCK -> cameraLock()
+                Actions.ACTION_CAMERA_UNLOCK -> cameraUnlock()
+                Actions.ACTION_SET_WALLPAPER -> setWallpaper()
+                Actions.ACTION_REMOVE_WALLPAPER -> removeWallpaper()
+                Actions.ACTION_REBOOT_DEVICE -> rebootDevice()
+                Actions.ACTION_CALL_LOCK -> callLock()
+                Actions.ACTION_CALL_UNLOCK -> callUnlock()
+                Actions.ACTION_RESET_PASSWORD -> resetPassword("000000")
+//                Actions.ACTION_REACTIVATE_DEVICE -> reactivateDevice()
+//                Actions.ACTION_DEACTIVATE_DEVICE -> deactivateDevice()
 
-                DeviceActions.ACTION_REMOVE_DEVICE -> removeDevice()
+                Actions.ACTION_REMOVE_DEVICE -> removeDevice()
             }
             clearPayload()
         } catch (error: Exception) {
             Log.e("ActionExecuterError", "execute: ${error.message}")
+            clearPayload()
         }
-    }
-
-    fun setPayload(payload: Map<String, String>) {
-        this.currentPayload = payload
     }
 
     private fun clearPayload() {
@@ -173,7 +173,6 @@ class ActionExecuter(
 
     private fun resetPassword(newPassword: String) {
         // check last
-
     }
 
     private fun reactivateDevice() {

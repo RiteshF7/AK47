@@ -7,7 +7,7 @@ import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 class GetLocationHandler(
     private val context: Context,
@@ -36,8 +36,8 @@ class GetLocationHandler(
                     sendTo(
                         true,
                         context,
-                        DeviceActions.ACTION_GET_LOCATION,
-                        mapOf(DeviceActions.ACTION_GET_LOCATION.toString() to googleMapsUrl),
+                        Actions.ACTION_GET_LOCATION,
+                        mapOf(Actions.ACTION_GET_LOCATION.toString() to googleMapsUrl),
                     )
                 } ?: Log.e("LocationHandler", "Location is null")
             }.addOnFailureListener { e ->

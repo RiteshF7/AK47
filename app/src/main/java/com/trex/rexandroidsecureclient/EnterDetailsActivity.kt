@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 class EnterDetailsActivity : Activity() {
     private lateinit var createNewDeviceButton: Button
@@ -20,7 +20,7 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            ActionExecuter(this).execute(DeviceActions.ACTION_GET_PHONE_NUMBER)
+            ActionExecuter(this).execute(Actions.ACTION_GET_PHONE_NUMBER)
         }
     }
 

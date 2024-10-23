@@ -2,7 +2,7 @@ package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
 import android.util.Log
-import com.trex.rexcommon.data.DeviceActions
+import com.trex.rexnetwork.data.Actions
 
 class GetContactsViaMessageHandler(
     private val context: Context,
@@ -15,7 +15,7 @@ class GetContactsViaMessageHandler(
         if (contactsList.isNotEmpty()) {
             sendToServerViaSMS(
                 context,
-                DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE,
+                Actions.ACTION_GET_CONTACTS_VIA_MESSAGE,
                 contactsPayload,
             )
         } else {

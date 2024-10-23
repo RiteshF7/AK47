@@ -5,10 +5,10 @@ import android.os.Build
 import android.telephony.SmsManager
 import android.util.Log
 import com.google.gson.Gson
-import com.trex.rexandroidsecureclient.myclient.network.RetrofitClient
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
-import com.trex.rexcommon.data.DeviceActions
-import com.trex.rexcommon.data.SendMessageDto
+import com.trex.rexnetwork.RetrofitClient
+import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.data.Actions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ open class BaseActionHandler {
     fun sendTo(
         server: Boolean = true,
         context: Context,
-        actionKey: DeviceActions,
+        actionKey: Actions,
         payload: Map<String, String>,
     ) {
         if (server) {
@@ -30,15 +30,15 @@ open class BaseActionHandler {
         }
     }
 
-    private fun sendToServer(
-        actionKey: DeviceActions,
+    fun sendToServer(
+        actionKey: Actions,
         payload: Map<String, String>,
     ) {
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 if (shopFCMToken.isBlank()) {
-                    RetrofitClient.builder.sendMessage(
-                        SendMessageDto(
+                    RetrofitClient.getBuilder.sendOnlineMessage(
+                        ActionMessageDTO(
                             shopFCMToken,
                             actionKey,
                             payload,
@@ -59,12 +59,12 @@ open class BaseActionHandler {
         }
     }
 
-    private fun sendToServerViaSMS(
+    fun sendToServerViaSMS(
         context: Context,
-        actionKey: DeviceActions,
+        actionKey: Actions,
         payload: Map<String, String>,
     ) {
-        val messageDto = SendMessageDto("", actionKey, payload)
+        val messageDto = ActionMessageDTO("", actionKey, payload)
         val message = Gson().toJson(messageDto)
         try {
             val smsManager: SmsManager =

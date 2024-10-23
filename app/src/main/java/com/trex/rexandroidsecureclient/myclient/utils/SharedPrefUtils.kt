@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.trex.rexandroidsecureclient.MyApplication
-import com.trex.rexandroidsecureclient.myclient.network.models.QrAdditionalData
+import com.trex.rexandroidsecureclient.myclient.utils.QrAdditionalData
 
 open class SharedPrefUtil {
     private val context = MyApplication.getAppContext()
