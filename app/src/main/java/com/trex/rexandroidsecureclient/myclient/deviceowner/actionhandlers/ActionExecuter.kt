@@ -26,13 +26,17 @@ class ActionExecuter(
 
         try {
             when (action) {
+                DeviceActions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
+                DeviceActions.ACTION_GET_CONTACTS -> getContacts()
+                DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
+                DeviceActions.ACTION_GET_LOCATION -> getLocation()
+                DeviceActions.ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
+                DeviceActions.ACTION_GET_DEVICE_INFO -> getDeviceInfo()
+                DeviceActions.ACTION_GET_UNLOCK_CODE -> getUnlockCode()
                 DeviceActions.ACTION_LOCK_DEVICE -> lockDevice()
                 DeviceActions.ACTION_UNLOCK_DEVICE -> unlockDevice()
                 DeviceActions.ACTION_EMI_AUDIO_REMINDER -> playAudioReminder()
                 DeviceActions.ACTION_EMI_SCREEN_REMINDER -> showScreenReminder()
-                DeviceActions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
-                DeviceActions.ACTION_GET_CONTACTS -> getContacts()
-                DeviceActions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
                 DeviceActions.ACTION_OFFLINE_LOCK -> offlineLock()
                 DeviceActions.ACTION_OFFLINE_UNLOCK -> offlineUnlock()
                 DeviceActions.ACTION_APP_UNLOCK -> appUnlock()
@@ -40,16 +44,13 @@ class ActionExecuter(
                 DeviceActions.ACTION_CAMERA_UNLOCK -> cameraUnlock()
                 DeviceActions.ACTION_SET_WALLPAPER -> setWallpaper()
                 DeviceActions.ACTION_REMOVE_WALLPAPER -> removeWallpaper()
-                DeviceActions.ACTION_GET_LOCATION -> getLocation()
-                DeviceActions.ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
                 DeviceActions.ACTION_REBOOT_DEVICE -> rebootDevice()
                 DeviceActions.ACTION_CALL_LOCK -> callLock()
                 DeviceActions.ACTION_CALL_UNLOCK -> callUnlock()
                 DeviceActions.ACTION_RESET_PASSWORD -> resetPassword("000000")
                 DeviceActions.ACTION_REACTIVATE_DEVICE -> reactivateDevice()
                 DeviceActions.ACTION_DEACTIVATE_DEVICE -> deactivateDevice()
-                DeviceActions.ACTION_GET_DEVICE_INFO -> getDeviceInfo()
-                DeviceActions.ACTION_GET_UNLOCK_CODE -> getUnlockCode()
+
                 DeviceActions.ACTION_REMOVE_DEVICE -> removeDevice()
             }
             clearPayload()
