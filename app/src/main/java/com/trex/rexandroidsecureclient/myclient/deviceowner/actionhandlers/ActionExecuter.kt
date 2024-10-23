@@ -55,6 +55,9 @@ class ActionExecuter(
 //                Actions.ACTION_DEACTIVATE_DEVICE -> deactivateDevice()
 
                 Actions.ACTION_REMOVE_DEVICE -> removeDevice()
+                Actions.ACTION_LOCK_SCREEN -> {
+                    mDevicePolicyManagerGateway.lockNow({}, {})
+                }
             }
             clearPayload()
         } catch (error: Exception) {
