@@ -2,8 +2,10 @@ package com.trex.rexandroidsecureclient
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.google.firebase.messaging.FirebaseMessaging
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.data.Actions
 
@@ -20,11 +22,21 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            ActionExecuter(this).execute(Actions.ACTION_GET_PHONE_NUMBER)
+            showToast("")
+//            ActionExecuter(this).execute(Actions.ACTION_GET_PHONE_NUMBER)
         }
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.i("TAG", "showToast: $token")
+            Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
+
+        }
     }
 }
