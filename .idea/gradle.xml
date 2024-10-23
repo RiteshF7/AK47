@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/setupcompat" />
             <option value="$PROJECT_DIR$/setupdesign" />
+            <option value="$PROJECT_DIR$/../RexNetwork/app/rexnetwork" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

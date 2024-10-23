@@ -17,5 +17,5 @@ rootProject.name = "RASC"
 include ':app'
 include ':setupcompat'
 include ':setupdesign'
-include ':RexNetwork'
-project (':RexNetwork').projectDir = new File('C:\\Users\\rites\\AndroidStudioProjects\\RexNetwork\\app\\rexnetwork')
+include ':rexnetwork'
+project (':rexnetwork').projectDir = new File('C:\\Users\\rites\\AndroidStudioProjects\\RexNetwork\\app\\rexnetwork')
