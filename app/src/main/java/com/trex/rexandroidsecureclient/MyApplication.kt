@@ -5,9 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.admin.DevicePolicyManager
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Build
 import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
+import com.trex.rexnetwork.Constants
 
 class MyApplication : Application() {
     companion object {
@@ -34,6 +37,10 @@ class MyApplication : Application() {
         super.onCreate()
         Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
         instance = this
+        val receiver = PayloadReceiver()
+        val filter = IntentFilter("$packageName.${Constants.KEY_BROADCAST_PAYLOAD_ACTION}")
+        this.registerReceiver(receiver, filter)
+
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
     }
