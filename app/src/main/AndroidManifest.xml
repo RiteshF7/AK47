@@ -102,9 +102,6 @@
             </intent-filter>
         </receiver>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="default_channel" />
 
         <receiver
             android:name=".myclient.PayloadReceiver"
@@ -114,6 +111,10 @@
             </intent-filter>
         </receiver>
 
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="default_channel" />
         <service
             android:name="com.trex.rexnetwork.domain.firebasecore.MyFirebaseMessagingService"
             android:directBootAware="true"

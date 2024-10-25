@@ -3,10 +3,10 @@ package com.trex.rexandroidsecureclient.myclient
 import DeviceInfoUtil
 import android.content.Context
 import android.util.Log
-import com.google.firebase.messaging.FirebaseMessaging
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexnetwork.RetrofitClient
 import com.trex.rexnetwork.data.NewDevice
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,27 +18,20 @@ class DeviceBuilderUtils(
     private var imei = CommonConstants.KEY_IMEI_NOT_FOUND
     private var fcmToken = CommonConstants.KEY_FCM_TOKEN_NOT_FOUND
     private val deviceInfoUtils = DeviceInfoUtil()
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
 
     init {
-        getFcmToken {
-            this.fcmToken = it
+        getFcmToken()?.let { fcmToken ->
+            this.fcmToken = fcmToken
         }
     }
 
-    private fun getFcmToken(onSuccess: (String) -> Unit) {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("", "Fetching FCM registration token failed", task.exception)
-                return@addOnCompleteListener
-            }
-            val token = task.result
-            onSuccess(token)
-        }
-    }
+    private fun getFcmToken(): String? = sharedPreferenceManager.getFCMToken()
 
     fun saveShopId(shopId: String) {
         if (shopId.isNotBlank()) {
             this.shopId = shopId
+            sharedPreferenceManager.saveShopId(shopId)
         }
     }
 
@@ -46,11 +39,13 @@ class DeviceBuilderUtils(
         // also check IMEIValidator.isValidIMEI(imei) in prod
         if (imei.isNotBlank()) {
             this.imei = imei
+            sharedPreferenceManager.saveImei(imei)
         }
     }
 
     fun createDevice(onSuccess: (Boolean) -> Unit) {
         if (!isAllFieldValid()) return
+
         val newDevice = buildNewDevice()
         saveDeviceToFirebase(newDevice, onSuccess)
     }

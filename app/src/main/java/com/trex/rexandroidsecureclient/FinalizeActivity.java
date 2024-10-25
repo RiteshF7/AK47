@@ -88,10 +88,6 @@ public class FinalizeActivity extends Activity {
             });
         });
 
-        //try to find shop id from intent
-        //on back pressed on finilized and error case
-        // try locking and unlocking device onw complete flow after provisioning
-
 
 //        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
 //            Log.i(TAG, "Automatically provisioning device onwer");

@@ -1,8 +1,6 @@
 package com.trex.rexandroidsecureclient
 
 import android.app.Activity
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -13,7 +11,6 @@ class EnterDetailsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
-
 
 //        startActivity(Intent(this, FinalizeActivity::class.java))
         // Initialize views
@@ -28,6 +25,5 @@ class EnterDetailsActivity : Activity() {
 
     private fun showToast(message: String) {
         Log.i("onCLick::", "showToast: clicked")
-
     }
 }
