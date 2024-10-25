@@ -116,7 +116,7 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="default_channel" />
         <service
-            android:name="com.trex.rexnetwork.domain.firebasecore.MyFirebaseMessagingService"
+            android:name="com.trex.rexnetwork.domain.firebasecore.fcm.MyFirebaseMessagingService"
             android:directBootAware="true"
             android:exported="true">
             <intent-filter>
@@ -124,7 +124,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.trex.rexnetwork.domain.firebasecore.ForegroundService"
+            android:name="com.trex.rexnetwork.domain.firebasecore.fcm.ForegroundService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="dataSync" />

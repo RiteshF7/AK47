@@ -5,23 +5,28 @@ import android.os.Build
 import android.telephony.SmsManager
 import android.util.Log
 import com.google.gson.Gson
+import com.trex.rexandroidsecureclient.MyApplication
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexnetwork.RetrofitClient
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.domain.firebasecore.ShopFirestore
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 open class BaseActionHandler {
-    private val shopFCMToken = ""
+    private val shopFirestore = ShopFirestore()
+    private val mSharedPref = SharedPreferenceManager(MyApplication.getAppContext())
+    private var shopFCMToken = mSharedPref.getFCMToken()
 
     fun sendTo(
-        server: Boolean = true,
         context: Context,
         actionKey: Actions,
         payload: Map<String, String>,
+        server: Boolean = true,
     ) {
         if (server) {
             sendToServer(actionKey, payload)
@@ -36,10 +41,10 @@ open class BaseActionHandler {
     ) {
         try {
             CoroutineScope(Dispatchers.IO).launch {
-                if (shopFCMToken.isBlank()) {
+                shopFCMToken?.let { shopId ->
                     RetrofitClient.getBuilder.sendOnlineMessage(
                         ActionMessageDTO(
-                            shopFCMToken,
+                            shopId,
                             actionKey,
                             payload,
                         ),

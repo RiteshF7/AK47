@@ -11,6 +11,8 @@ import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
 import com.trex.rexnetwork.Constants
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 
 class MyApplication : Application() {
     companion object {
@@ -37,12 +39,16 @@ class MyApplication : Application() {
         super.onCreate()
         Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
         instance = this
-        val receiver = PayloadReceiver()
-        val filter = IntentFilter("$packageName.${Constants.KEY_BROADCAST_PAYLOAD_ACTION}")
-        this.registerReceiver(receiver, filter)
-
+        initPayloadReceiver()
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
+    }
+
+
+    private fun initPayloadReceiver() {
+        val receiver = PayloadReceiver()
+        val filter = IntentFilter("$packageName.${Constants.KEY_BROADCAST_PAYLOAD_ACTION}")
+        this.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
     }
 
     fun createNotificationChannel(context: Context) {
