@@ -10,7 +10,7 @@ import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
 import com.trex.rexnetwork.RetrofitClient
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
-import com.trex.rexnetwork.domain.firebasecore.ShopFirestore
+import com.trex.rexnetwork.domain.firebasecore.firesstore.FCMTokenFirestore
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +18,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 open class BaseActionHandler {
-    private val shopFirestore = ShopFirestore()
+    private val fcmFirestore = FCMTokenFirestore()
     private val mSharedPref = SharedPreferenceManager(MyApplication.getAppContext())
-    private var shopFCMToken = mSharedPref.getFCMToken()
 
     fun sendTo(
         context: Context,
@@ -40,13 +39,13 @@ open class BaseActionHandler {
         payload: Map<String, String>,
     ) {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
-                shopFCMToken?.let { shopId ->
+            getShopFcmToken { shopToken ->
+                CoroutineScope(Dispatchers.IO).launch {
                     RetrofitClient.getBuilder.sendOnlineMessage(
                         ActionMessageDTO(
-                            shopId,
+                            shopToken,
                             actionKey,
-                            payload,
+                                payload,
                         ),
                     )
                 }
@@ -81,6 +80,14 @@ open class BaseActionHandler {
             smsManager.sendTextMessage(CommonConstants.SMS_NUM, null, message, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    fun getShopFcmToken(onSuccess: (String) -> Unit) {
+        mSharedPref.getShopId()?.let { shopId ->
+            fcmFirestore.getFcmToken(shopId) { shopToken ->
+                onSuccess(shopToken)
+            }
         }
     }
 }

@@ -35,9 +35,11 @@ class SMSReceiver : BroadcastReceiver() {
                             )
                         ) {
                             val messageDto = ActionMessageDTOMapper.fromJsonToDTO(messageBody)
-                            Log.i(TAG, "onReceive by sms :: ${messageDto.action}")
+                            Log.i(TAG, "onReceive by sms :: ${messageDto?.action}")
                             val actionExecuter = ActionExecuter(context)
-                            actionExecuter.execute(messageDto.action)
+                            if (messageDto != null) {
+                                actionExecuter.execute(messageDto.action)
+                            }
                         }
                     }
                 }

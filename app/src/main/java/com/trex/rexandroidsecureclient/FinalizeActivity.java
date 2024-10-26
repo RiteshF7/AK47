@@ -57,6 +57,7 @@ public class FinalizeActivity extends Activity {
         setContentView(R.layout.finalize_activity);
         deviceBuilderUtils = new DeviceBuilderUtils(this);
         deviceBuilderUtils.saveShopId("+919910000163");
+        deviceBuilderUtils.saveShopId("+919910000163");
 
         createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);
