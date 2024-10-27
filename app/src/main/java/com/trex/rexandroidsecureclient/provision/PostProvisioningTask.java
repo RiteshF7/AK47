@@ -33,6 +33,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.util.Log;
 
@@ -45,8 +47,10 @@ import com.trex.rexnetwork.Constants;
 import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Task executed after provisioning is done indicated by either the {@link
@@ -96,8 +100,6 @@ public class PostProvisioningTask {
         // Retreive the admin extras bundle, which we can use to determine the original context for
         // TestDPCs launch.
         PersistableBundle extras = intent.getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
-        String shopId = extras.getString(Constants.KEY_QR_SHOP_ID,"Nothing from qr");
-        new SharedPreferenceManager(mContext).saveShopId(shopId);
         if (Util.SDK_INT >= VERSION_CODES.O) {
             maybeSetAffiliationIds(extras);
         }
@@ -137,6 +139,8 @@ public class PostProvisioningTask {
             launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
         } else {
             launch = new Intent(mContext, FinalizeActivity.class);
+            launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
+
         }
 
         if (synchronousAuthLaunch) {

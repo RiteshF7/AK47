@@ -16,8 +16,11 @@
 
 package com.trex.rexandroidsecureclient;
 
+import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -31,6 +34,7 @@ import android.widget.Toast;
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
+import com.trex.rexnetwork.Constants;
 
 public class FinalizeActivity extends Activity {
 
@@ -48,6 +52,10 @@ public class FinalizeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+        String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
+        deviceBuilderUtils = new DeviceBuilderUtils(this);
+        deviceBuilderUtils.saveShopId(shopId);
 
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
@@ -55,9 +63,6 @@ public class FinalizeActivity extends Activity {
             }
         }
         setContentView(R.layout.finalize_activity);
-        deviceBuilderUtils = new DeviceBuilderUtils(this);
-        deviceBuilderUtils.saveShopId("+919910000163");
-        deviceBuilderUtils.saveShopId("+919910000163");
 
         createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);
