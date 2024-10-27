@@ -41,6 +41,8 @@ import com.trex.rexandroidsecureclient.FinalizeActivity;
 import com.trex.rexandroidsecureclient.common.LaunchIntentUtil;
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.cosu.EnableCosuActivity;
+import com.trex.rexnetwork.Constants;
+import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +96,8 @@ public class PostProvisioningTask {
         // Retreive the admin extras bundle, which we can use to determine the original context for
         // TestDPCs launch.
         PersistableBundle extras = intent.getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+        String shopId = extras.getString(Constants.KEY_QR_SHOP_ID,"Nothing from qr");
+        new SharedPreferenceManager(mContext).saveShopId(shopId);
         if (Util.SDK_INT >= VERSION_CODES.O) {
             maybeSetAffiliationIds(extras);
         }

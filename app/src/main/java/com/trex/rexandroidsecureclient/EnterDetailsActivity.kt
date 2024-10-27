@@ -1,12 +1,11 @@
 package com.trex.rexandroidsecureclient
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexnetwork.data.Actions
+import android.widget.Toast
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class EnterDetailsActivity : Activity() {
     private lateinit var createNewDeviceButton: Button
@@ -21,9 +20,11 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            showToast("")
+            val shopId =SharedPreferenceManager(this).getShopId()
+            shopId?.let { id->
+                Toast.makeText(this, "$id is shopid", Toast.LENGTH_SHORT).show()
+            }
 
-            ActionExecuter(this).execute(Actions.ACTION_GET_CONTACTS)
         }
     }
 
