@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.UserManager
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
+import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
 import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
 import com.trex.rexnetwork.data.Actions
@@ -58,6 +59,10 @@ class ActionExecuter(
                 Actions.ACTION_LOCK_SCREEN -> {
                     mDevicePolicyManagerGateway.lockNow({}, {})
                 }
+
+                Actions.ACTION_REG_DEVICE -> {
+                    registerDeviceUsingFCM()
+                }
             }
             clearPayload()
         } catch (error: Exception) {
@@ -65,6 +70,8 @@ class ActionExecuter(
             clearPayload()
         }
     }
+
+
 
     private fun clearPayload() {
         this.currentPayload = mapOf()
@@ -79,6 +86,10 @@ class ActionExecuter(
         }, { error ->
             Log.i(TAG, "lockDevice: error :: ${error.message}")
         })
+    }
+
+    private fun registerDeviceUsingFCM() {
+        RegisterDeviceHandler(context).handle()
     }
 
     private fun unlockDevice() {

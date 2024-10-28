@@ -29,7 +29,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils;
@@ -77,22 +76,26 @@ public class FinalizeActivity extends Activity {
         });
 
         createDeviceButton.setOnClickListener(view -> {
-            hideKeyboard();
-            deviceBuilderUtils.saveImei(imeiEditText.getText().toString().trim());
-            processProgessUi();
-            deviceBuilderUtils.createDevice(aBoolean -> {
-                runOnUiThread(() -> {
-                    if (aBoolean) {
-                        processSuccessUI();
-                    } else {
-                        processFailureUi();
-                        Toast.makeText(this, "Something went wrong! Please try again.", Toast.LENGTH_SHORT).show();
-                    }
-                });
 
-                return null;
-            });
         });
+
+//        createDeviceButton.setOnClickListener(view -> {
+//            hideKeyboard();
+//            deviceBuilderUtils.saveImei(imeiEditText.getText().toString().trim());
+//            processProgessUi();
+//            deviceBuilderUtils.createDevice(aBoolean -> {
+//                runOnUiThread(() -> {
+//                    if (aBoolean) {
+//                        processSuccessUI();
+//                    } else {
+//                        processFailureUi();
+//                        Toast.makeText(this, "Something went wrong! Please try again.", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//                return null;
+//            });
+//        });
 
 
 //        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {

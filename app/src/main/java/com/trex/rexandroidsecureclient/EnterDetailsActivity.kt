@@ -6,14 +6,19 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class EnterDetailsActivity : Activity() {
     private lateinit var createNewDeviceButton: Button
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
+        sharedPreferenceManager  = SharedPreferenceManager(this)
+        sharedPreferenceManager.saveShopId("+919910000163")
 
 //        startActivity(Intent(this, FinalizeActivity::class.java))
         // Initialize views
@@ -21,14 +26,9 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
-            getErrorLogs()
-            val shopId = SharedPreferenceManager(this).getShopId()
-            if (shopId == null) {
-                showToast("nope!!")
-            }
-            shopId?.let { id ->
-                Toast.makeText(this, "$id is shopid", Toast.LENGTH_SHORT).show()
-            }
+            ActionExecuter(this).execute(
+                Actions.ACTION_REG_DEVICE,
+            )
         }
     }
 
