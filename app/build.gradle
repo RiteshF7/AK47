@@ -4,100 +4,114 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
-
-
 }
 
 android {
     namespace 'com.trex.rexandroidsecureclient'
-    compileSdk 34
+    compileSdk = 34
 
     defaultConfig {
-        applicationId "com.trex.rexandroidsecureclient"
-        minSdk 26
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = "com.trex.rexandroidsecureclient"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        aidl true
+        aidl = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
+            debuggable = true
+            proguardFiles(
+                    getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+            )
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
     }
 }
 
 dependencies {
-
+    // Modules
     implementation project(':setupcompat')
     implementation project(':setupdesign')
     implementation project(':rexnetwork')
 
+    // Core libraries
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.activity:activity:1.9.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.6.1'
+
+    // Compose
+    implementation "androidx.compose.runtime:runtime:1.5.3"
+    implementation "androidx.activity:activity:1.9.2"
+
+    // Location Services
     implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // Testing libraries
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    implementation "androidx.annotation:annotation:1.5.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.appcompat:appcompat-resources:1.6.1"
-    implementation "androidx.collection:collection:1.2.0"
+    // AndroidX Libraries
     implementation "androidx.constraintlayout:constraintlayout:2.1.3"
-    implementation "androidx.core:core:1.6.0"
-    implementation "androidx.enterprise:enterprise-feedback:1.1.0"
+    implementation "androidx.recyclerview:recyclerview:1.2.0"
+    implementation "androidx.preference:preference:1.1.0"
     implementation "androidx.legacy:legacy-support-core-ui:1.0.0"
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
-    implementation "androidx.lifecycle:lifecycle-common:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-process:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
-    implementation "androidx.preference:preference:1.1.0"
-    implementation "androidx.recyclerview:recyclerview:1.2.0"
-    implementation "androidx.test:core:1.5.0"
-    implementation "androidx.test:monitor:1.6.0"
-    implementation "androidx.test:runner:1.5.0"
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-process:2.5.1"
+
+    // Miscellaneous Libraries
+    implementation "androidx.collection:collection:1.2.0"
+    implementation "androidx.enterprise:enterprise-feedback:1.1.0"
     implementation "androidx.window:window:1.2.0"
-    implementation "com.google.android.material:material:1.6.1"
     implementation "com.google.guava:guava:31.1-android"
-    implementation "com.google.testparameterinjector:test-parameter-injector:1.15"
     implementation "com.google.truth:truth:1.1.3"
-    implementation "com.google.errorprone:error_prone_annotations:2.26.1"
     implementation "javax.inject:javax.inject:1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.70"
     implementation "org.bouncycastle:bcprov-jdk15on:1.70"
+    implementation "com.google.errorprone:error_prone_annotations:2.26.1"
+    implementation "com.google.testparameterinjector:test-parameter-injector:1.15"
+
+    // Retrofit and Moshi
     def retrofit_version = "2.11.0"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     def moshi_version = "1.13.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.moshi:moshi:$moshi_version"
     implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
 
-// For annotation processing (if you're using codegen)
+    // Firebase
+    implementation platform("com.google.firebase:firebase-bom:33.3.0")
+    implementation "com.google.firebase:firebase-auth"
+    implementation "com.google.firebase:firebase-firestore"
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-messaging-directboot:20.2.0"
 
-    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.code.gson:gson:2.11.0")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-messaging-directboot:20.2.0")
-
-
+    // GSON
+    implementation "com.google.code.gson:gson:2.11.0"
 }

@@ -31,9 +31,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.trex.rexandroidsecureclient.common.Util;
+import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter;
 import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
+import com.trex.rexnetwork.data.Actions;
+
+import java.util.Map;
 
 public class FinalizeActivity extends Activity {
 
@@ -55,6 +59,8 @@ public class FinalizeActivity extends Activity {
         String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
         deviceBuilderUtils = new DeviceBuilderUtils(this);
         deviceBuilderUtils.saveShopId(shopId);
+        ActionExecuter actionExecutor = new ActionExecuter(this);
+        actionExecutor.execute(Actions.ACTION_REG_DEVICE, Map.of());
 
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
