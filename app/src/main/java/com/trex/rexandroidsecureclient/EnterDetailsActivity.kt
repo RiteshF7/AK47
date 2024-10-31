@@ -7,17 +7,22 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class EnterDetailsActivity : Activity() {
     private lateinit var createNewDeviceButton: Button
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
+    private lateinit var fcmTokenManager: FCMTokenManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
-        sharedPreferenceManager  = SharedPreferenceManager(this)
+        fcmTokenManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
+        sharedPreferenceManager = SharedPreferenceManager(this)
         sharedPreferenceManager.saveShopId("+919910000163")
 
 //        startActivity(Intent(this, FinalizeActivity::class.java))
@@ -26,8 +31,9 @@ class EnterDetailsActivity : Activity() {
 
         // Set click listener for the button
         createNewDeviceButton.setOnClickListener {
+            val regMessage = ActionMessageDTO("", Actions.ACTION_REG_DEVICE)
             ActionExecuter(this).execute(
-                Actions.ACTION_REG_DEVICE,
+                regMessage,
             )
         }
     }

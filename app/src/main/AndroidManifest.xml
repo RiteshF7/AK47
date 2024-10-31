@@ -92,6 +92,9 @@
         <activity
             android:name=".EnterDetailsActivity"
             android:exported="false" />
+        <activity
+            android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".myclient.SMSReceiver"
@@ -115,6 +118,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="default_channel" />
+
         <service
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.MyFirebaseMessagingService"
             android:directBootAware="true"

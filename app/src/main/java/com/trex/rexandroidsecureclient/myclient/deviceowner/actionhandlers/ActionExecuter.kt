@@ -8,28 +8,23 @@ import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
 import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
+import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmResponseManager
 
 class ActionExecuter(
     private val context: Context,
 ) {
     private val TAG: String = "Action Executor"
 
-    private var currentPayload: Map<String, String> = mapOf()
-
     private val mDevicePolicyManagerGateway: DevicePolicyManagerGatewayImpl =
         DevicePolicyManagerGatewayImpl(
             context,
         )
 
-    fun execute(
-        action: Actions,
-        payload: Map<String, String> = mapOf(),
-    ) {
-        this.currentPayload = payload
-
+    fun execute(message: ActionMessageDTO) {
         try {
-            when (action) {
+            when (message.action) {
                 Actions.ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
                 Actions.ACTION_GET_CONTACTS -> getContacts()
                 Actions.ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
@@ -61,20 +56,16 @@ class ActionExecuter(
                 }
 
                 Actions.ACTION_REG_DEVICE -> {
-                    registerDeviceUsingFCM()
+                    registerDeviceUsingFCM(message)
+                }
+
+                Actions.ACTION_REG_DEVICE_COMPLETED -> {
+                    FcmResponseManager.handleResponse(message.requestId, message)
                 }
             }
-            clearPayload()
         } catch (error: Exception) {
             Log.e("ActionExecuterError", "execute: ${error.message}")
-            clearPayload()
         }
-    }
-
-
-
-    private fun clearPayload() {
-        this.currentPayload = mapOf()
     }
 
     private fun lockDevice() {
@@ -88,8 +79,8 @@ class ActionExecuter(
         })
     }
 
-    private fun registerDeviceUsingFCM() {
-        RegisterDeviceHandler(context).handle()
+    private fun registerDeviceUsingFCM(message: ActionMessageDTO) {
+        RegisterDeviceHandler(context).handle(message)
     }
 
     private fun unlockDevice() {

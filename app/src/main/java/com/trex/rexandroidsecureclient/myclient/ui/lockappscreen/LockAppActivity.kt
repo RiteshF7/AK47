@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
 
 class LockAppActivity : Activity() {
@@ -42,7 +43,7 @@ class LockAppActivity : Activity() {
         this.startLockTask()
 
         unlcokButton.setOnClickListener {
-            ActionExecuter(this).execute(Actions.ACTION_UNLOCK_DEVICE)
+            ActionExecuter(this).execute(ActionMessageDTO("", Actions.ACTION_UNLOCK_DEVICE))
         }
     }
 

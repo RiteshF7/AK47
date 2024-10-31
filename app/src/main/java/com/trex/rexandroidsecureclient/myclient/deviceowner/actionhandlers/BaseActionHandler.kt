@@ -3,63 +3,41 @@ package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
-import android.util.Log
 import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.MyApplication
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
-import com.trex.rexnetwork.RetrofitClient
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestActivity
 import com.trex.rexnetwork.domain.firebasecore.firesstore.FCMTokenFirestore
+import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.SharedPreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import com.trex.rexnetwork.utils.startMyActivity
 
 open class BaseActionHandler {
     private val fcmFirestore = FCMTokenFirestore()
     private val mSharedPref = SharedPreferenceManager(MyApplication.getAppContext())
+    private val sendActionMessageRepository = SendActionMessageRepository()
 
     fun sendTo(
         context: Context,
         actionKey: Actions,
         payload: Map<String, String>,
         server: Boolean = true,
+        waitForResult: Boolean = false,
     ) {
-        if (server) {
-            sendToServer(actionKey, payload)
-        } else {
-            sendToServerViaSMS(context, actionKey, payload)
-        }
-    }
-
-    fun sendToServer(
-        actionKey: Actions,
-        payload: Map<String, String>,
-    ) {
-        try {
-            getShopFcmToken { shopToken ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    RetrofitClient.getBuilder.sendOnlineMessage(
-                        ActionMessageDTO(
-                            shopToken,
-                            actionKey,
-                                payload,
-                        ),
-                    )
-                }
-            }
-        } catch (e: HttpException) {
-            if (e.code() == 500) {
-                // Handle HTTP 500 Internal Server Error
-                println("Internal Server Error: ${e.message}")
+        getShopFcmToken { shopToken ->
+            val message =
+                ActionMessageDTO(
+                    shopToken,
+                    actionKey,
+                    payload,
+                )
+            if (waitForResult) {
+                context.startMyActivity(FcmRequestActivity::class.java, message)
             } else {
-                // Handle other HTTP errors
-                println("HTTP Error: ${e.code()} - ${e.message}")
+                sendActionMessageRepository.sendActionMessage(message)
             }
-        } catch (error: Exception) {
-            Log.e("", "sendToServer: error :: ${error.message}")
         }
     }
 

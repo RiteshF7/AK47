@@ -35,9 +35,8 @@ import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
+import com.trex.rexnetwork.data.ActionMessageDTO;
 import com.trex.rexnetwork.data.Actions;
-
-import java.util.Map;
 
 public class FinalizeActivity extends Activity {
 
@@ -60,7 +59,7 @@ public class FinalizeActivity extends Activity {
         deviceBuilderUtils = new DeviceBuilderUtils(this);
         deviceBuilderUtils.saveShopId(shopId);
         ActionExecuter actionExecutor = new ActionExecuter(this);
-        actionExecutor.execute(Actions.ACTION_REG_DEVICE, Map.of());
+//        actionExecutor.execute(new ActionMessageDTO("", Actions.ACTION_REG_DEVICE));
 
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
