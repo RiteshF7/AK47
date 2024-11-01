@@ -15,8 +15,11 @@ class PayloadReceiver : BroadcastReceiver() {
     ) {
         ActionMessageDTOMapper.getMessageDTOFromIntent(intent)?.let { actionMessageDTO ->
             Log.i("", "onReceive: ${actionMessageDTO.action}")
-            FcmResponseManager.handleResponse(actionMessageDTO.requestId, actionMessageDTO)
             val actionExecuter = ActionExecuter(context)
+            if (FcmResponseManager.hasRequest(actionMessageDTO.requestId)) {
+
+                return
+            }
             actionExecuter.execute(actionMessageDTO)
         }
     }
