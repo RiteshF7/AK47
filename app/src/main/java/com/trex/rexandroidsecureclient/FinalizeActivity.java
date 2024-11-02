@@ -37,6 +37,9 @@ import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
 import com.trex.rexnetwork.data.ActionMessageDTO;
 import com.trex.rexnetwork.data.Actions;
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater;
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager;
+import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
 public class FinalizeActivity extends Activity {
 
@@ -48,25 +51,30 @@ public class FinalizeActivity extends Activity {
     private ImageView imageView;
     private EditText imeiEditText;
     private ProgressBar progressBar;
+    private FCMTokenManager fcmTokenManager;
+    private SharedPreferenceManager sharedPreferenceManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.finalize_activity);
+
+        fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
+        sharedPreferenceManager = new SharedPreferenceManager(this);
+
         PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+        //saving shop id
         String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
-        deviceBuilderUtils = new DeviceBuilderUtils(this);
-        deviceBuilderUtils.saveShopId(shopId);
-        ActionExecuter actionExecutor = new ActionExecuter(this);
-//        actionExecutor.execute(new ActionMessageDTO("", Actions.ACTION_REG_DEVICE));
+        sharedPreferenceManager.saveShopId(shopId);
 
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
                 ProvisioningUtil.enableProfile(this);
             }
         }
-        setContentView(R.layout.finalize_activity);
+
 
         createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);

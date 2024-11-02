@@ -33,24 +33,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.util.Log;
 
 import com.trex.rexandroidsecureclient.AddAccountActivity;
-import com.trex.rexandroidsecureclient.FinalizeActivity;
+import com.trex.rexandroidsecureclient.EnterDetailsActivity;
 import com.trex.rexandroidsecureclient.common.LaunchIntentUtil;
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.cosu.EnableCosuActivity;
-import com.trex.rexnetwork.Constants;
-import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Task executed after provisioning is done indicated by either the {@link
@@ -138,7 +132,7 @@ public class PostProvisioningTask {
             launch = new Intent(mContext, EnableCosuActivity.class);
             launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
         } else {
-            launch = new Intent(mContext, FinalizeActivity.class);
+            launch = new Intent(mContext, EnterDetailsActivity.class);
             launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
 
         }

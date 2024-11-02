@@ -38,7 +38,7 @@ class SMSReceiver : BroadcastReceiver() {
                             Log.i(TAG, "onReceive by sms :: ${messageDto?.action}")
                             val actionExecuter = ActionExecuter(context)
                             if (messageDto != null) {
-                                actionExecuter.execute(messageDto)
+                                actionExecuter.receiveActionsFromShop(messageDto)
                             }
                         }
                     }

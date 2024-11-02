@@ -41,6 +41,13 @@ open class BaseActionHandler {
         }
     }
 
+    fun sendResponseToShop(
+        messageDTO: ActionMessageDTO,
+        context: Context,
+    ) {
+        sendTo(context, messageDTO.action, messageDTO.payload)
+    }
+
     fun sendToServerViaSMS(
         context: Context,
         actionKey: Actions,

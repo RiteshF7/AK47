@@ -43,7 +43,12 @@ class LockAppActivity : Activity() {
         this.startLockTask()
 
         unlcokButton.setOnClickListener {
-            ActionExecuter(this).execute(ActionMessageDTO("", Actions.ACTION_UNLOCK_DEVICE))
+            ActionExecuter(this).receiveActionsFromShop(
+                ActionMessageDTO(
+                    "",
+                    Actions.ACTION_UNLOCK_DEVICE,
+                ),
+            )
         }
     }
 

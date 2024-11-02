@@ -17,10 +17,12 @@ class PayloadReceiver : BroadcastReceiver() {
             Log.i("", "onReceive: ${actionMessageDTO.action}")
             val actionExecuter = ActionExecuter(context)
             if (FcmResponseManager.hasRequest(actionMessageDTO.requestId)) {
-
+                FcmResponseManager.handleResponse(actionMessageDTO.requestId, actionMessageDTO)
+                actionExecuter.receiveResponseFromShop(actionMessageDTO)
                 return
             }
-            actionExecuter.execute(actionMessageDTO)
+
+            actionExecuter.receiveActionsFromShop(actionMessageDTO)
         }
     }
 }
