@@ -5,14 +5,19 @@ import android.app.admin.DevicePolicyManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.widget.Button
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
 
 class EnterDetailsActivity : Activity() {
+    private lateinit var retryBtn: Button
+
     // Dependencies
     private val sharedPreferenceManager by lazy {
         SharedPreferenceManager(this)
@@ -21,7 +26,16 @@ class EnterDetailsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
-        processProvisioningExtras()
+        retryBtn = findViewById(R.id.btn_reg_dev_retry)
+        FCMTokenManager(this,ClientFCMTokenUpdater(this)).refreshToken("")
+        retryBtn.setOnClickListener {
+            // for testing only
+            sharedPreferenceManager.saveShopId("+919910000163")
+            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
+        }
+
+
+//        processProvisioningExtras()
     }
 
     private fun processProvisioningExtras() {

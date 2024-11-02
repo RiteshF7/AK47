@@ -45,7 +45,9 @@ open class BaseActionHandler {
         messageDTO: ActionMessageDTO,
         context: Context,
     ) {
-        sendTo(context, messageDTO.action, messageDTO.payload)
+        getShopFcmToken { shopFcmToken ->
+            sendActionMessageRepository.sendActionMessage(messageDTO.copy(fcmToken = shopFcmToken))
+        }
     }
 
     fun sendToServerViaSMS(

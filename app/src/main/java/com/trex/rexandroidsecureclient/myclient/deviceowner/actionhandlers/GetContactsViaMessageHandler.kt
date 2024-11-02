@@ -7,7 +7,7 @@ import com.trex.rexnetwork.data.Actions
 class GetContactsViaMessageHandler(
     private val context: Context,
 ) : GetContactsHandler(context) {
-    override fun handle() {
+     fun handle() {
         val contactsList = getAllContacts(context.contentResolver)
         val contactsString = contactsList.joinToString(",")
         val contactsPayload = mapOf("contacts" to contactsString)
