@@ -79,9 +79,9 @@ class ActionExecuter(
                 ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
                 ACTION_GET_CONTACTS -> GetContactsHandler(context).handle(message)
                 ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
-                ACTION_GET_LOCATION -> getLocation()
+                ACTION_GET_LOCATION -> getLocation(message)
                 ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
-                ACTION_GET_DEVICE_INFO -> getDeviceInfo()
+                ACTION_GET_DEVICE_INFO -> getDeviceInfo(message)
                 ACTION_GET_UNLOCK_CODE -> getUnlockCode()
                 ACTION_LOCK_DEVICE -> lockDevice()
                 ACTION_UNLOCK_DEVICE -> unlockDevice()
@@ -190,8 +190,8 @@ class ActionExecuter(
         RemoveWallpaperHandler(context).handle()
     }
 
-    private fun getLocation() {
-        GetLocationHandler(context).handle()
+    private fun getLocation(message: ActionMessageDTO) {
+        GetLocationHandler(context).handle(message)
     }
 
     private fun getLocationViaMessage() {
@@ -231,10 +231,8 @@ class ActionExecuter(
         Log.i("ActionExecuter", "Deactivate device action triggered")
     }
 
-    private fun getDeviceInfo(): String {
-        // Implement device info retrieval logic
-        Log.i("ActionExecuter", "Get device info action triggered")
-        return "Device Info"
+    private fun getDeviceInfo(message: ActionMessageDTO) {
+        GetDeviceInfoHandler(context).handle(message)
     }
 
     private fun getUnlockCode(): String {

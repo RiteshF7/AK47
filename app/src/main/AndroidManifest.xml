@@ -95,6 +95,9 @@
         <activity
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestActivity"
             android:exported="false" />
+        <activity
+            android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmResultActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".myclient.SMSReceiver"

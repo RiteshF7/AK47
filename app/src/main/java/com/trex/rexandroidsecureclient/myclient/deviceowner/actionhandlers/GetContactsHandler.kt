@@ -4,9 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.ContactsContract
-import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
-import com.trex.rexnetwork.data.Actions
 
 open class GetContactsHandler(
     private val context: Context,
@@ -15,14 +13,9 @@ open class GetContactsHandler(
         val contactsList = getAllContacts(context.contentResolver)
         if (contactsList.isNotEmpty()) {
             val contactsString = contactsList.joinToString(",")
-            val contactsPayload =
-                mapOf(
-                    Actions.ACTION_GET_CONTACTS.name to contactsString,
-                    Constants.KEY_RESPOSE_RESULT_STATUS to Constants.RESPONSE_RESULT_SUCCESS,
-                )
 
-            val response = messageDTO.copy(payload = contactsPayload)
-            sendResponseToShop(response, context)
+            val response = buildResponseFromRequest(messageDTO, true, contactsString)
+            sendResponseToShop(response)
         }
     }
 

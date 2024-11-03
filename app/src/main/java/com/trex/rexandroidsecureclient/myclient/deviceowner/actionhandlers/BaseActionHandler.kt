@@ -6,6 +6,7 @@ import android.telephony.SmsManager
 import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.MyApplication
 import com.trex.rexandroidsecureclient.myclient.utils.CommonConstants
+import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestActivity
@@ -43,7 +44,6 @@ open class BaseActionHandler {
 
     fun sendResponseToShop(
         messageDTO: ActionMessageDTO,
-        context: Context,
     ) {
         getShopFcmToken { shopFcmToken ->
             sendActionMessageRepository.sendActionMessage(messageDTO.copy(fcmToken = shopFcmToken))
@@ -68,6 +68,21 @@ open class BaseActionHandler {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun buildResponseFromRequest(
+        messageDTO: ActionMessageDTO,
+        isSuccess: Boolean,
+        payload: String,
+    ): ActionMessageDTO {
+        val status =
+            if (isSuccess) Constants.RESPONSE_RESULT_SUCCESS else Constants.RESPONSE_RESULT_FAILED
+        val payload =
+            mapOf(
+                Constants.KEY_RESPOSE_RESULT_STATUS to status,
+                messageDTO.action.name to payload,
+            )
+        return messageDTO.copy(payload = payload)
     }
 
     fun getShopFcmToken(onSuccess: (String) -> Unit) {
