@@ -27,13 +27,12 @@ class EnterDetailsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
-        FCMTokenManager(this,ClientFCMTokenUpdater(this)).refreshToken("")
+        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
             // for testing only
             sharedPreferenceManager.saveShopId("+919910000163")
             ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
         }
-
 
 //        processProvisioningExtras()
     }

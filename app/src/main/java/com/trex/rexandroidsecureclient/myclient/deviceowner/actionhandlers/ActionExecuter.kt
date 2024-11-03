@@ -34,9 +34,11 @@ import com.trex.rexnetwork.data.Actions.ACTION_REMOVE_WALLPAPER
 import com.trex.rexnetwork.data.Actions.ACTION_RESET_PASSWORD
 import com.trex.rexnetwork.data.Actions.ACTION_SET_WALLPAPER
 import com.trex.rexnetwork.data.Actions.ACTION_UNLOCK_DEVICE
+import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmResultActivity
 import com.trex.rexnetwork.domain.firebasecore.firesstore.FCMTokenFirestore
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.isGetRequest
+import com.trex.rexnetwork.utils.startMyActivity
 
 class ActionExecuter(
     private val context: Context,
@@ -65,6 +67,9 @@ class ActionExecuter(
             when {
                 // for future get events from shop that contains data !!
             }
+        }
+        else{
+            context.startMyActivity(FcmResultActivity::class.java,message)
         }
     }
 
