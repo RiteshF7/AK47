@@ -1,14 +1,11 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
-import android.content.Intent
-import android.os.UserManager
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
-import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
-import com.trex.rexandroidsecureclient.myclient.ui.lockappscreen.LockAppActivity
 import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.data.Actions.ACTION_APP_UNLOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_LOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_UNLOCK
@@ -17,7 +14,6 @@ import com.trex.rexnetwork.data.Actions.ACTION_CAMERA_UNLOCK
 import com.trex.rexnetwork.data.Actions.ACTION_EMI_AUDIO_REMINDER
 import com.trex.rexnetwork.data.Actions.ACTION_EMI_SCREEN_REMINDER
 import com.trex.rexnetwork.data.Actions.ACTION_GET_CONTACTS
-import com.trex.rexnetwork.data.Actions.ACTION_GET_CONTACTS_VIA_MESSAGE
 import com.trex.rexnetwork.data.Actions.ACTION_GET_DEVICE_INFO
 import com.trex.rexnetwork.data.Actions.ACTION_GET_LOCATION
 import com.trex.rexnetwork.data.Actions.ACTION_GET_LOCATION_VIA_MESSAGE
@@ -67,38 +63,39 @@ class ActionExecuter(
             when {
                 // for future get events from shop that contains data !!
             }
-        }
-        else{
-            context.startMyActivity(FcmResultActivity::class.java,message)
+        } else {
+            context.startMyActivity(FcmResultActivity::class.java, message)
         }
     }
 
     fun receiveActionsFromShop(message: ActionMessageDTO) {
         try {
             when (message.action) {
-                ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
                 ACTION_GET_CONTACTS -> GetContactsHandler(context).handle(message)
-                ACTION_GET_CONTACTS_VIA_MESSAGE -> getContactsViaMessage()
                 ACTION_GET_LOCATION -> getLocation(message)
-                ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
                 ACTION_GET_DEVICE_INFO -> getDeviceInfo(message)
-                ACTION_GET_UNLOCK_CODE -> getUnlockCode()
-                ACTION_LOCK_DEVICE -> lockDevice()
-                ACTION_UNLOCK_DEVICE -> unlockDevice()
-                ACTION_EMI_AUDIO_REMINDER -> playAudioReminder()
-                ACTION_EMI_SCREEN_REMINDER -> showScreenReminder()
-                ACTION_OFFLINE_LOCK -> offlineLock()
-                ACTION_OFFLINE_UNLOCK -> offlineUnlock()
-                ACTION_APP_UNLOCK -> appUnlock()
-                ACTION_CAMERA_LOCK -> cameraLock()
-                ACTION_CAMERA_UNLOCK -> cameraUnlock()
-                ACTION_SET_WALLPAPER -> setWallpaper()
-                ACTION_REMOVE_WALLPAPER -> removeWallpaper()
-                ACTION_REBOOT_DEVICE -> rebootDevice()
-                ACTION_CALL_LOCK -> callLock()
-                ACTION_CALL_UNLOCK -> callUnlock()
-                ACTION_RESET_PASSWORD -> resetPassword("000000")
+                ACTION_LOCK_DEVICE -> lockDevice(message)
+                ACTION_UNLOCK_DEVICE -> unlockDevice(message)
+                ACTION_EMI_AUDIO_REMINDER -> playAudioReminder(message)
+                ACTION_EMI_SCREEN_REMINDER -> showScreenReminder(message)
+                ACTION_CAMERA_LOCK -> cameraLock(message)
+                ACTION_CAMERA_UNLOCK -> cameraUnlock(message)
+                ACTION_SET_WALLPAPER -> setWallpaper(message)
+                ACTION_REMOVE_WALLPAPER -> removeWallpaper(message)
+                ACTION_REBOOT_DEVICE -> rebootDevice(message)
+                ACTION_CALL_LOCK -> callLock(message)
+                ACTION_CALL_UNLOCK -> callUnlock(message)
+
+                ACTION_RESET_PASSWORD -> resetPassword("000000", message)
                 ACTION_REMOVE_DEVICE -> removeDevice()
+                ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
+                ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
+                ACTION_GET_UNLOCK_CODE -> getUnlockCode()
+                ACTION_OFFLINE_LOCK -> offlineLock(message)
+                ACTION_OFFLINE_UNLOCK -> offlineUnlock(message)
+                ACTION_APP_UNLOCK -> appUnlock(message)
+                Actions.ACTION_APP_LOCK -> {}
+
                 ACTION_LOCK_SCREEN -> {
                     mDevicePolicyManagerGateway.lockNow({}, {})
                 }
@@ -110,35 +107,25 @@ class ActionExecuter(
         }
     }
 
-    private fun lockDevice() {
-        mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
-            val kioskIntent = Intent(context, LockAppActivity::class.java)
-            kioskIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            context.startActivity(kioskIntent)
-            Log.i(TAG, "lockDevice: Success")
-        }, { error ->
-            Log.i(TAG, "lockDevice: error :: ${error.message}")
-        })
+    private fun lockDevice(message: ActionMessageDTO) {
+        LockDeviceHandler(context).handle(message)
     }
 
     private fun registerDeviceUsingFCM(message: ActionMessageDTO) {
         RegisterDeviceHandler(context).handle(message)
     }
 
-    private fun unlockDevice() {
-        val stopLockTaskIntent = Intent(LockAppActivity.STOP_LOCK_TASK)
-        context.sendBroadcast(stopLockTaskIntent)
+    private fun unlockDevice(message: ActionMessageDTO) {
+        UnlockDeviceHandler(context).handle(message)
     }
 
-    private fun playAudioReminder() {
-        AudioReminderHandler(context).playAudioReminder()
+    private fun playAudioReminder(message: ActionMessageDTO) {
+        AudioReminderHandler(context).playAudioReminder(message)
         Log.i("ActionExecuter", "Play audio reminder action triggered")
     }
 
-    private fun showScreenReminder() {
-        val emiReminderActivity = Intent(context, EmiReminderActivity::class.java)
-        emiReminderActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        context.startActivity(emiReminderActivity)
+    private fun showScreenReminder(message: ActionMessageDTO) {
+        EMIScreenReminderHandler(context).handle(message)
     }
 
     private fun getPhoneNumber() {
@@ -152,42 +139,33 @@ class ActionExecuter(
         GetContactsViaMessageHandler(context).handle()
     }
 
-    private fun offlineLock() {
-        lockDevice()
+    private fun offlineLock(message: ActionMessageDTO) {
+        lockDevice(message)
     }
 
-    private fun offlineUnlock() {
-        unlockDevice()
+    private fun offlineUnlock(message: ActionMessageDTO) {
+        unlockDevice(message)
     }
 
-    private fun appUnlock() {
+    private fun appUnlock(message: ActionMessageDTO) {
         // Implement app unlock logic
         Log.i("ActionExecuter", "App unlock action triggered")
     }
 
-    private fun disableCam(boolean: Boolean) {
-        val state = if (boolean) "enabled" else "disabled"
-        mDevicePolicyManagerGateway.setCameraDisabled(
-            boolean,
-            {
-                Log.i(TAG, "camera$state: Success")
-            },
-            {
-                Log.e(TAG, "camera$state: Error")
-            },
-        )
+    private fun cameraLock(message: ActionMessageDTO) {
+        CameraLockHandler(context).handle(message)
     }
 
-    private fun cameraLock() = disableCam(true)
-
-    private fun cameraUnlock() = disableCam(false)
-
-    private fun setWallpaper() {
-        SetWallpaperHandler(context).handle()
+    private fun cameraUnlock(message: ActionMessageDTO) {
+        CameraUnlockHandler(context).handle(message)
     }
 
-    private fun removeWallpaper() {
-        RemoveWallpaperHandler(context).handle()
+    private fun setWallpaper(message: ActionMessageDTO) {
+        SetWallpaperHandler(context).handle(message)
+    }
+
+    private fun removeWallpaper(message: ActionMessageDTO) {
+        RemoveWallpaperHandler(context).handle(message)
     }
 
     private fun getLocation(message: ActionMessageDTO) {
@@ -198,27 +176,23 @@ class ActionExecuter(
         // check
     }
 
-    private fun rebootDevice() {
-        mDevicePolicyManagerGateway.reboot(
-            {
-                Log.i(TAG, "rebootDevice: rebooting!")
-            },
-            { error -> Log.i(TAG, "rebootDevice: ${error.message}") },
-        )
+    private fun rebootDevice(message: ActionMessageDTO) {
+        RebootDeviceHandler(context).handle(message)
     }
 
-    private fun callLock() {
-        mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true)
-        Log.i("ActionExecuter", "Call lock action triggered")
+    private fun callLock(message: ActionMessageDTO) {
+        CallLockHandler(context).handle(message)
     }
 
-    private fun callUnlock() {
-        mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true)
-        Log.i("ActionExecuter", "Call unlock action triggered")
+    private fun callUnlock(message: ActionMessageDTO) {
+        CallUnlockHandler(context).handle(message)
     }
 
-    private fun resetPassword(newPassword: String) {
-        // check last
+    private fun resetPassword(
+        newPassword: String,
+        message: ActionMessageDTO,
+    ) {
+        ResetPasswordHandler(context).handle(message)
     }
 
     private fun reactivateDevice() {

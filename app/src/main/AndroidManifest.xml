@@ -99,6 +99,10 @@
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmResultActivity"
             android:exported="false" />
 
+        <activity
+            android:name="com.trex.rexnetwork.ui.lockscreen.ui.lockscreen.LockScreenActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".myclient.SMSReceiver"
             android:enabled="true"

@@ -42,9 +42,7 @@ open class BaseActionHandler {
         }
     }
 
-    fun sendResponseToShop(
-        messageDTO: ActionMessageDTO,
-    ) {
+    fun sendResponseToShop(messageDTO: ActionMessageDTO) {
         getShopFcmToken { shopFcmToken ->
             sendActionMessageRepository.sendActionMessage(messageDTO.copy(fcmToken = shopFcmToken))
         }
@@ -83,6 +81,22 @@ open class BaseActionHandler {
                 messageDTO.action.name to payload,
             )
         return messageDTO.copy(payload = payload)
+    }
+
+    fun buildAndSendResponseFromRequest(
+        messageDTO: ActionMessageDTO,
+        isSuccess: Boolean,
+        payload: String,
+    ) {
+        val status =
+            if (isSuccess) Constants.RESPONSE_RESULT_SUCCESS else Constants.RESPONSE_RESULT_FAILED
+        val payloadMap =
+            mapOf(
+                Constants.KEY_RESPOSE_RESULT_STATUS to status,
+                messageDTO.action.name to payload,
+            )
+        val response = messageDTO.copy(payload = payloadMap)
+        sendResponseToShop(response)
     }
 
     fun getShopFcmToken(onSuccess: (String) -> Unit) {

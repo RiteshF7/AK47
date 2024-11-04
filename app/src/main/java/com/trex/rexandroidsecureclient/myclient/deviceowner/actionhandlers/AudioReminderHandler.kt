@@ -5,13 +5,14 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import com.trex.rexandroidsecureclient.MyApplication
 import com.trex.rexandroidsecureclient.R
+import com.trex.rexnetwork.data.ActionMessageDTO
 
 class AudioReminderHandler(
     private val context: Context,
-) {
+) : BaseActionHandler() {
     private var mediaPlayer: MediaPlayer? = null
 
-    fun playAudioReminder() {
+    fun playAudioReminder(messageDTO: ActionMessageDTO) {
         // Release any existing media player instance
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer()
@@ -29,6 +30,7 @@ class AudioReminderHandler(
         }
 
         mediaPlayer?.setOnCompletionListener {
+            buildAndSendResponseFromRequest(messageDTO,true,"Audio reminder sent successfully!")
             it.release()
         }
     }

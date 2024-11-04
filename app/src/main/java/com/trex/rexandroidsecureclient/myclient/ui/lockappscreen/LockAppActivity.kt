@@ -40,6 +40,7 @@ class LockAppActivity : Activity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         this.startLockTask()
 
         unlcokButton.setOnClickListener {
