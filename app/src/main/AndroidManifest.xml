@@ -87,9 +87,6 @@
             android:name=".myclient.ui.emireminderscreen.EmiReminderActivity"
             android:exported="true" />
         <activity
-            android:name=".myclient.ui.lockappscreen.LockAppActivity"
-            android:exported="false" />
-        <activity
             android:name=".EnterDetailsActivity"
             android:exported="false" />
         <activity
@@ -100,7 +97,7 @@
             android:exported="false" />
 
         <activity
-            android:name="com.trex.rexnetwork.ui.lockscreen.ui.lockscreen.LockScreenActivity"
+            android:name=".myclient.ui.lockscreen.LockScreenActivity"
             android:exported="false" />
 
         <receiver
