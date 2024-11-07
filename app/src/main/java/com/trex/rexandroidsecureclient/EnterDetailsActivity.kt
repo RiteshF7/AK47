@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -30,8 +32,12 @@ class EnterDetailsActivity : Activity() {
         FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
             // for testing only
-            sharedPreferenceManager.saveShopId("+919910000163")
-            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
+            val errorLogs = MyExceptionHandler(this).getErrorLogs()
+            Log.i("mlogs", "onCreate: $errorLogs")
+            Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
+
+//            sharedPreferenceManager.saveShopId("+919910000163")
+//            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
         }
 
 //        processProvisioningExtras()

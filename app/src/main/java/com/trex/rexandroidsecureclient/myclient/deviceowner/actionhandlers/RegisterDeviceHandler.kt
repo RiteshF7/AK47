@@ -18,7 +18,7 @@ class RegisterDeviceHandler(
 
     fun handle(message: ActionMessageDTO) {
         val deviceModel = "${deviceInfoUtils.getManufacturer()} ${deviceInfoUtils.getDeviceModel()}"
-        fcmTokenManager.getFcmToken()?.let { fcmToken ->
+        fcmTokenManager.getFcmToken().let { fcmToken ->
             val deviceInfo = DeviceInfo(fcmToken, deviceModel)
             val deviceInfoString = Gson().toJson(deviceInfo)
             sendTo(

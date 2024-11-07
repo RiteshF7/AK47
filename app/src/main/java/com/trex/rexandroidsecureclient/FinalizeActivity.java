@@ -41,6 +41,9 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater;
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager;
 import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class FinalizeActivity extends Activity {
 
     private static final String TAG = FinalizeActivity.class.getSimpleName();
@@ -75,6 +78,10 @@ public class FinalizeActivity extends Activity {
             }
         }
 
+        ActionMessageDTO regAction = new ActionMessageDTO("", Actions.ACTION_REG_DEVICE, new HashMap<>(), false, UUID.randomUUID().toString());
+
+        new ActionExecuter(this).sendActionToShop(regAction);
+
 
         createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);
@@ -89,7 +96,8 @@ public class FinalizeActivity extends Activity {
         });
 
         createDeviceButton.setOnClickListener(view -> {
-
+            setResult(RESULT_OK);
+            finish();
         });
 
 //        createDeviceButton.setOnClickListener(view -> {
