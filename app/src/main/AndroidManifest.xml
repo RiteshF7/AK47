@@ -90,6 +90,9 @@
             android:name=".EnterDetailsActivity"
             android:exported="false" />
         <activity
+            android:name=".myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity"
+            android:exported="false" />
+        <activity
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestActivity"
             android:exported="false" />
         <activity

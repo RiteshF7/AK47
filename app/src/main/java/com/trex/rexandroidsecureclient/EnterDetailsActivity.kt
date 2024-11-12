@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.ui.lockscreen.LockScreenActivity
+import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -16,6 +18,7 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
+import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -32,9 +35,10 @@ class EnterDetailsActivity : Activity() {
         FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
             // for testing only
-            val errorLogs = MyExceptionHandler(this).getErrorLogs()
-            Log.i("mlogs", "onCreate: $errorLogs")
-            Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
+            this.startMyActivity(UnlockWithCodeActivity::class.java)
+//            val errorLogs = MyExceptionHandler(this).getErrorLogs()
+//            Log.i("mlogs", "onCreate: $errorLogs")
+//            Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
 
 //            sharedPreferenceManager.saveShopId("+919910000163")
 //            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
