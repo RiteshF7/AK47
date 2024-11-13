@@ -32,7 +32,9 @@ class EnterDetailsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
-        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
+        this.startMyActivity(UnlockWithCodeActivity::class.java)
+//
+//        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
             // for testing only
             this.startMyActivity(UnlockWithCodeActivity::class.java)

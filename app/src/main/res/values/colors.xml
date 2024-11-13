@@ -28,6 +28,7 @@
     <color name="dark_green">#388E3C</color>
     <color name="primary_dark">#ff254FAE</color>
     <color name="primary">#00dc7f</color>
+    <color name="red_300">#e57373</color>
     <color name="accent">#ff3367d6</color>
     <color name="managed_provisioning_color">#4285f4</color>
 </resources>

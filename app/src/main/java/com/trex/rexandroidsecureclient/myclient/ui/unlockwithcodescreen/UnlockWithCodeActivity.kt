@@ -106,20 +106,23 @@ fun UnlockScreen(
             .background(color = Color.Black.copy(alpha = 0.85f)),
     ) {
         Column(
-            Modifier.padding(horizontal = 16.dp).fillMaxSize(),
+            Modifier
+                .padding(horizontal = 26.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(100.dp))
+            Spacer(Modifier.height(30.dp))
+
             LockIcon(uiState)
 
             if (uiState.isUnlocked) {
                 LockInfoCard(
-                    "Device Successfully Unlocked",
+                    "Device Unlocked",
                     "Your device is now accessible. Please tap the button below to continue.",
                 )
             } else {
                 LockInfoCard(
-                    "Device Access Restricted",
+                    "Device Locked",
                     "Your device has been locked due to a pending payment. Please complete the payment process to restore full access to your device.",
                 )
             }
@@ -142,7 +145,8 @@ fun UnlockScreen(
                         ),
                     modifier =
                         Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
                 )
             }
 
@@ -216,7 +220,11 @@ fun LockInfoCard(
     desc: String,
 ) {
     Card(
-        Modifier.fillMaxWidth().padding(top = 20.dp),
+        shape = RoundedCornerShape(8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
         colors =
             CardDefaults.cardColors(
                 containerColor = Color.White.copy(alpha = 0.1f),
@@ -224,20 +232,27 @@ fun LockInfoCard(
             ),
     ) {
         Column(
-            Modifier.fillMaxWidth().padding(10.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                fontSize = 20.sp,
+                fontSize = 28.sp, // Increased from 24.sp for more prominent heading
                 text = title,
-                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold, // Kept Bold for heading
             )
             Text(
-                fontSize = 16.sp,
-                modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                fontSize = 14.sp, // Reduced from 16.sp for better contrast with heading
+                modifier =
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
                 text = desc,
                 textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Normal, // Changed from Medium to Normal for better readability
             )
         }
     }
@@ -245,40 +260,27 @@ fun LockInfoCard(
 
 @Composable
 fun LockIcon(uiState: UnlockUiState) {
-    if (uiState.isUnlocked) {
-        Card(
-            colors =
-                CardDefaults.cardColors(
-                    containerColor = Color.Green.copy(alpha = 0.1f),
-                    contentColor = Color.White,
-                ),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "",
-                tint = Color(0xFF00C853),
-                modifier =
-                    Modifier
-                        .size(92.dp)
-                        .padding(5.dp),
-            )
+    val (icon, color) =
+        when (uiState.isUnlocked) {
+            true -> Icons.Default.Check to colorResource(R.color.primary)
+            false -> Icons.Default.Lock to Color.White
         }
-    } else {
-        Card(
-            colors =
-                CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.1f),
-                    contentColor = Color.White,
-                ),
-        ) {
+    Card(
+        shape = RoundedCornerShape(100.dp),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = Color.White.copy(alpha = 0.1f),
+                contentColor = Color.White,
+            ),
+    ) {
+        Box(Modifier.padding(35.dp)) {
             Icon(
-                imageVector = Icons.Default.Lock,
+                imageVector = icon,
                 contentDescription = "",
-                tint = Color.Red,
+                tint = color,
                 modifier =
                     Modifier
-                        .size(92.dp)
-                        .padding(5.dp),
+                        .size(100.dp),
             )
         }
     }
