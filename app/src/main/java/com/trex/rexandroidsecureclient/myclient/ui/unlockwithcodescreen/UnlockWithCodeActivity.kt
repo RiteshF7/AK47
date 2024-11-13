@@ -51,11 +51,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trex.rexandroidsecureclient.R
+import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.data.Actions
 
 // Usage in Activity
 class UnlockWithCodeActivity : ComponentActivity() {
-    private val viewModel: UnlockDeviceViewModel by viewModels()
-
     private val stopLockTaskReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
@@ -81,6 +82,12 @@ class UnlockWithCodeActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     UnlockScreen(vm) {
+                        ActionExecuter(this).receiveActionsFromShop(
+                            ActionMessageDTO(
+                                "",
+                                Actions.ACTION_UNLOCK_DEVICE,
+                            ),
+                        )
                         finish()
                     }
                 }
