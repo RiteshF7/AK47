@@ -13,7 +13,11 @@ class UnlockDeviceViewModel : ViewModel() {
     val uiState: State<UnlockUiState> = _uiState
     private val repo = SendActionMessageRepository()
 
-    fun verifyCode(code: String) {
+    fun verifyCode(
+        code: String,
+        shopId: String,
+        deviceId: String,
+    ) {
         if (code.isBlank()) {
             _uiState.value =
                 _uiState.value.copy(
@@ -26,7 +30,7 @@ class UnlockDeviceViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                val isSuccess = repo.verifyCode(code)
+                val isSuccess = repo.verifyCode(code, shopId, deviceId)
                 if (isSuccess) {
                     handleSuccessfulUnlock()
                 } else {
@@ -52,7 +56,6 @@ class UnlockDeviceViewModel : ViewModel() {
                 isUnlocked = true,
                 isLoading = false,
             )
-        // Add any additional unlock logic here
     }
 }
 

@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +55,7 @@ import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 // Usage in Activity
 class UnlockWithCodeActivity : ComponentActivity() {
@@ -69,6 +71,7 @@ class UnlockWithCodeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val intentFilter = IntentFilter(STOP_LOCK_TASK)
         val vm: UnlockDeviceViewModel by viewModels()
 
@@ -105,6 +108,7 @@ fun UnlockScreen(
     vm: UnlockDeviceViewModel,
     onFinish: () -> Unit,
 ) {
+    val context = LocalContext.current
     val uiState by vm.uiState
     var code by remember { mutableStateOf("") }
     Box(
@@ -172,7 +176,12 @@ fun UnlockScreen(
                     )
                 } else {
                     UnlockButton(text = "Unlock with code", icon = Icons.Default.Done) {
-                        vm.verifyCode(code)
+                        val sp = SharedPreferenceManager(context)
+                        sp.getShopId()?.let { shopId ->
+                            sp.getDeviceId()?.let { deviceId ->
+                                vm.verifyCode(code, shopId, deviceId)
+                            }
+                        }
                     }
                 }
             }

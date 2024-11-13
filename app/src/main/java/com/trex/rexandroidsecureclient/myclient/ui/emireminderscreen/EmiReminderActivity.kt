@@ -1,22 +1,35 @@
 package com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen
 
-import android.app.Activity
 import android.os.Bundle
-import android.view.Window
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.trex.rexandroidsecureclient.R
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 
-class EmiReminderActivity : Activity() {
+class EmiReminderActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        setContentView(R.layout.activity_emi_reminder)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContent {
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
+                ) {
+                }
+            }
         }
+    }
+
+    @Composable
+    fun EmiReminderScreen() {
+    }
+
+    @Preview
+    @Composable
+    fun preview() {
     }
 }

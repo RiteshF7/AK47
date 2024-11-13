@@ -6,16 +6,11 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
-import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
-import com.trex.rexandroidsecureclient.myclient.ui.lockscreen.LockScreenActivity
 import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
-import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
-import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
 import com.trex.rexnetwork.utils.startMyActivity
@@ -32,10 +27,12 @@ class EnterDetailsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
-        this.startMyActivity(UnlockWithCodeActivity::class.java)
+//        this.startMyActivity(UnlockWithCodeActivity::class.java)
 //
 //        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
+            sharedPreferenceManager.saveShopId("+919910000163")
+            sharedPreferenceManager.saveDeviceId("123456789009876")
             // for testing only
             this.startMyActivity(UnlockWithCodeActivity::class.java)
 //            val errorLogs = MyExceptionHandler(this).getErrorLogs()

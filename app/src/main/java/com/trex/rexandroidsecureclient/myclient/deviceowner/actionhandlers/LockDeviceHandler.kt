@@ -3,7 +3,7 @@ package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 import android.content.Context
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
-import com.trex.rexandroidsecureclient.myclient.ui.lockscreen.LockScreenActivity
+import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.utils.startMyActivity
 
@@ -17,7 +17,7 @@ class LockDeviceHandler(
 
     fun handle(messageDTO: ActionMessageDTO) {
         mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
-            context.startMyActivity(LockScreenActivity::class.java)
+            context.startMyActivity(UnlockWithCodeActivity::class.java)
 
             buildAndSendResponseFromRequest(messageDTO, true, "Device Locked Successfully!")
             Log.i("", "lockDevice: Success")
