@@ -21,9 +21,7 @@ import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXT
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +30,6 @@ import android.widget.TextView;
 
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter;
-import com.trex.rexandroidsecureclient.myclient.DeviceBuilderUtils;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
 import com.trex.rexnetwork.data.ActionMessageDTO;
@@ -47,8 +44,6 @@ import java.util.UUID;
 public class FinalizeActivity extends Activity {
 
     private static final String TAG = FinalizeActivity.class.getSimpleName();
-    private DeviceBuilderUtils deviceBuilderUtils;
-    private Button createDeviceButton;
     private Button finishSetupButton;
     private TextView titleText;
     private ImageView imageView;
@@ -66,11 +61,13 @@ public class FinalizeActivity extends Activity {
 
         fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        fcmTokenManager.refreshToken(fcmTokenManager.getFcmToken());
 
         PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
         //saving shop id
         String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
         sharedPreferenceManager.saveShopId(shopId);
+
 
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
@@ -78,27 +75,20 @@ public class FinalizeActivity extends Activity {
             }
         }
 
-        ActionMessageDTO regAction = new ActionMessageDTO("", Actions.ACTION_REG_DEVICE, new HashMap<>(), false, UUID.randomUUID().toString());
 
-        new ActionExecuter(this).sendActionToShop(regAction);
-
-
-        createDeviceButton = findViewById(R.id.btn_fin);
         finishSetupButton = findViewById(R.id.btn_complete_setup);
-        titleText = findViewById(R.id.tv_fin);
         imageView = findViewById(R.id.setup_complete_status_iv);
-        imeiEditText = findViewById(R.id.ed_fin);
-        progressBar = findViewById(R.id.in_progress_fin);
 
         finishSetupButton.setOnClickListener(view -> {
-            setResult(RESULT_OK);
-            finish();
+            Boolean isRegComplete = sharedPreferenceManager.getRegCompleteStatus();
+            if (isRegComplete) {
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                initDeviceRegistration();
+            }
         });
 
-        createDeviceButton.setOnClickListener(view -> {
-            setResult(RESULT_OK);
-            finish();
-        });
 
 //        createDeviceButton.setOnClickListener(view -> {
 //            hideKeyboard();
@@ -130,37 +120,11 @@ public class FinalizeActivity extends Activity {
 
     }
 
+    void initDeviceRegistration() {
+        ActionMessageDTO regAction = new ActionMessageDTO("", Actions.ACTION_REG_DEVICE, new HashMap<>(), false, UUID.randomUUID().toString());
+        new ActionExecuter(this).sendActionToShop(regAction);
 
-    private void processProgessUi() {
-        imeiEditText.setVisibility(View.GONE);
-        createDeviceButton.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void processSuccessUI() {
-        titleText.setText("Setup completed");
-        imageView.setVisibility(View.VISIBLE);
-        finishSetupButton.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
-    }
-
-    private void processFailureUi() {
-        createDeviceButton.setVisibility(View.VISIBLE);
-        createDeviceButton.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
-    }
-
-    public void hideKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
 
-    public void onNavigateNext(View nextButton) {
-        setResult(RESULT_OK);
-        finish();
-    }
 }
