@@ -17,8 +17,7 @@ class LockDeviceHandler(
 
     fun handle(messageDTO: ActionMessageDTO) {
         mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
-            context.startMyActivity(UnlockWithCodeActivity::class.java)
-
+            context.startMyActivity(UnlockWithCodeActivity::class.java, true)
             buildAndSendResponseFromRequest(messageDTO, true, "Device Locked Successfully!")
             Log.i("", "lockDevice: Success")
         }, { error ->

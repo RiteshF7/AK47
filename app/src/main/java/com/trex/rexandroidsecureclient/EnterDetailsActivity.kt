@@ -7,6 +7,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -14,6 +15,7 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
+import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -32,15 +34,18 @@ class EnterDetailsActivity : Activity() {
 //        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
         retryBtn.setOnClickListener {
             sharedPreferenceManager.saveShopId("+919910000163")
+            sharedPreferenceManager.saveDeviceId("456789012345678")
             // for testing only
-//            this.startMyActivity(UnlockWithCodeActivity::class.java)
+            this.startMyActivity(UnlockWithCodeActivity::class.java)
 //            val errorLogs = MyExceptionHandler(this).getErrorLogs()
 //            Log.i("mlogs", "onCreate: $errorLogs")
 //            Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
 
 //            sharedPreferenceManager.saveShopId("+919910000163")
-            val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
-            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
+//            val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
+//            clientFCMManager.refreshToken("")
+//            Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken()}")
+//            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
         }
 
 //        processProvisioningExtras()

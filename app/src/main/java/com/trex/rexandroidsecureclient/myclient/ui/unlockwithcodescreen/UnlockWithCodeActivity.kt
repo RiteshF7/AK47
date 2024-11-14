@@ -66,12 +66,13 @@ class UnlockWithCodeActivity : ComponentActivity() {
                 intent: Intent?,
             ) {
                 stopLockTask()
+                finish()
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        actionBar?.hide()
         val intentFilter = IntentFilter(STOP_LOCK_TASK)
         val vm: UnlockDeviceViewModel by viewModels()
 
