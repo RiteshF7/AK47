@@ -1,7 +1,6 @@
 package com.trex.rexandroidsecureclient.deviceowner
 
 class ScanQrCode {
-
     /*
     TODO
 
@@ -23,7 +22,7 @@ class ScanQrCode {
    good job !
 
 
-    * */
+     * */
 
     /*{
   "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.trex.rexandroidsecureclient/.deviceowner.RexDeviceOwnerReceiver",

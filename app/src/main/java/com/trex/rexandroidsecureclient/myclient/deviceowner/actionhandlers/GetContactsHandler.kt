@@ -16,6 +16,9 @@ open class GetContactsHandler(
 
             val response = buildResponseFromRequest(messageDTO, true, contactsString)
             sendResponseToShop(response)
+        } else {
+            val response = buildResponseFromRequest(messageDTO, false, "Contacts: No Contacts")
+            sendResponseToShop(response)
         }
     }
 

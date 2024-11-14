@@ -30,7 +30,7 @@ class AudioReminderHandler(
         }
 
         mediaPlayer?.setOnCompletionListener {
-            buildAndSendResponseFromRequest(messageDTO,true,"Audio reminder sent successfully!")
+            buildAndSendResponseFromRequest(messageDTO, true, "Audio reminder sent successfully!")
             it.release()
         }
     }

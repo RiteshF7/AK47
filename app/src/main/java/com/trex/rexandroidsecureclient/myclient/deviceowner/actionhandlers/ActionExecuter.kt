@@ -64,7 +64,7 @@ class ActionExecuter(
                 // for future get events from shop that contains data !!
             }
         } else {
-            context.startMyActivity(FcmResultActivity::class.java, message,true)
+            context.startMyActivity(FcmResultActivity::class.java, message, true)
         }
     }
 

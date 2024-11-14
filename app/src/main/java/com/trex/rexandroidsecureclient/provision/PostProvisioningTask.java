@@ -37,7 +37,7 @@ import android.os.PersistableBundle;
 import android.util.Log;
 
 import com.trex.rexandroidsecureclient.AddAccountActivity;
-import com.trex.rexandroidsecureclient.EnterDetailsActivity;
+import com.trex.rexandroidsecureclient.FinalizeActivity;
 import com.trex.rexandroidsecureclient.common.LaunchIntentUtil;
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.cosu.EnableCosuActivity;
@@ -132,7 +132,7 @@ public class PostProvisioningTask {
             launch = new Intent(mContext, EnableCosuActivity.class);
             launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
         } else {
-            launch = new Intent(mContext, EnterDetailsActivity.class);
+            launch = new Intent(mContext, FinalizeActivity.class);
             launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);
 
         }

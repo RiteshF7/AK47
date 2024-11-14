@@ -21,6 +21,7 @@ class LockDeviceHandler(
             buildAndSendResponseFromRequest(messageDTO, true, "Device Locked Successfully!")
             Log.i("", "lockDevice: Success")
         }, { error ->
+            buildAndSendResponseFromRequest(messageDTO, false, "No Admin access!")
             Log.i("", "lockDevice: error :: ${error.message}")
         })
     }

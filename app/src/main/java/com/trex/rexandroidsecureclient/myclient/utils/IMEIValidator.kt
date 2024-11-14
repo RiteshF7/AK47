@@ -8,7 +8,7 @@ object IMEIValidator {
      * @return true if the IMEI is valid, false otherwise.
      */
     fun isValidIMEI(imei: String): Boolean {
-        //TODO remove in production
+        // TODO remove in production
         return true
         // Remove any spaces or hyphens
         val cleanIMEI = imei.replace(Regex("\\s|-"), "")

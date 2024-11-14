@@ -15,6 +15,6 @@ class CallUnlockHandler(
 
     fun handle(messageDTO: ActionMessageDTO) {
         mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true)
-        buildAndSendResponseFromRequest(messageDTO,true,"Call unclocked successfully!")
+        buildAndSendResponseFromRequest(messageDTO, true, "Call unclocked successfully!")
     }
 }
