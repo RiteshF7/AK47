@@ -5,10 +5,12 @@ import android.app.admin.DevicePolicyManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.os.UserManager
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -26,31 +28,36 @@ class EnterDetailsActivity : Activity() {
         SharedPreferenceManager(this)
     }
 
+    private lateinit var mDevicePolicyManagerGateway: DevicePolicyManagerGatewayImpl
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_enter_details)
-        retryBtn = findViewById(R.id.btn_reg_dev_retry)
-//        this.startMyActivity(UnlockWithCodeActivity::class.java)
-//
-//        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken("")
-        retryBtn.setOnClickListener {
-            sharedPreferenceManager.saveShopId("+919910000163")
-            sharedPreferenceManager.saveDeviceId("456789012345678")
-            PermissionHandlerActivity.go(this)
+//        setContentView(R.layout.activity_enter_details)
+        finish()
+//        retryBtn = findViewById(R.id.btn_reg_dev_retry)
+//        mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
+//        saveInitialData()
+//        retryBtn.setOnClickListener {
+//            hideAppFromDrawer()
+//        }
+    }
 
-            // for testing only
-//            val errorLogs = MyExceptionHandler(this).getErrorLogs()
-//            Log.i("mlogs", "onCreate: $errorLogs")
-//            Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
+    fun saveInitialData() {
+        sharedPreferenceManager.saveShopId("+919910000163")
+        sharedPreferenceManager.saveDeviceId("456789012345678")
+    }
 
-//            sharedPreferenceManager.saveShopId("+919910000163")
-            val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
-            clientFCMManager.refreshToken("")
-            Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken()}")
-//            ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
-        }
+    fun sendRequest() {
+        val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
+        clientFCMManager.refreshToken("")
+        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
+        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken()}")
+    }
 
-//        processProvisioningExtras()
+    fun logError() {
+        val errorLogs = MyExceptionHandler(this).getErrorLogs()
+        Log.i("mlogs", "onCreate: $errorLogs")
+        Toast.makeText(this, "$errorLogs", Toast.LENGTH_SHORT).show()
     }
 
     private fun processProvisioningExtras() {
@@ -78,5 +85,46 @@ class EnterDetailsActivity : Activity() {
         if (requestCode == PermissionHandlerActivity.PERMISSION_RESULT_REQUEST_CODE && resultCode == RESULT_OK) {
             Toast.makeText(this, "ALl permission granted!!", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun blockAppUninstallation() {
+        // Call the method
+        mDevicePolicyManagerGateway.setUninstallBlocked(
+            this.packageName,
+            true, // true to block uninstallation
+            {
+                makeMyToast("success!")
+            },
+            {
+                makeMyToast("error ${it.message}")
+            },
+        )
+    }
+
+    fun Activity.makeMyToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun hideAppFromDrawer() {
+        mDevicePolicyManagerGateway.setApplicationHidden(
+            this.packageName,
+            true,
+            {
+                makeMyToast("success!")
+
+            },
+            {
+                makeMyToast("error ${it.message}")
+                Log.e("TAG", "hideAppFromDrawer: ${it}")
+            },
+        )
+    }
+
+    fun setUserRestrictions(mDevicePolicyManagerGateway: DevicePolicyManagerGatewayImpl) {
+        mDevicePolicyManagerGateway.setUserRestriction(UserManager.DISALLOW_FACTORY_RESET, true)
+//        mDevicePolicyManagerGateway.setUserRestriction(
+//            UserManager.DISALLOW_DEBUGGING_FEATURES,
+//            true,
+//        )
     }
 }
