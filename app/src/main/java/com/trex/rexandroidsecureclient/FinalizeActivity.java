@@ -40,6 +40,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+
 public class FinalizeActivity extends Activity {
 
     private static final String TAG = FinalizeActivity.class.getSimpleName();
@@ -60,7 +63,12 @@ public class FinalizeActivity extends Activity {
         setUserRestrictions(mDevicePolicyManagerGateway);
         fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
         sharedPreferenceManager = new SharedPreferenceManager(this);
-        fcmTokenManager.refreshToken(fcmTokenManager.getFcmToken());
+        fcmTokenManager.refreshToken(new Function1<String, Unit>() {
+            @Override
+            public Unit invoke(String s) {
+                return null;
+            }
+        });
 
         PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
 

@@ -32,14 +32,15 @@ class EnterDetailsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_enter_details)
-        finish()
-//        retryBtn = findViewById(R.id.btn_reg_dev_retry)
-//        mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
-//        saveInitialData()
-//        retryBtn.setOnClickListener {
-//            hideAppFromDrawer()
-//        }
+        setContentView(R.layout.activity_enter_details)
+        actionBar?.hide()
+//        finish()
+        retryBtn = findViewById(R.id.btn_reg_dev_retry)
+        mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
+        saveInitialData()
+        retryBtn.setOnClickListener {
+            sendRequest()
+        }
     }
 
     fun saveInitialData() {
@@ -49,9 +50,10 @@ class EnterDetailsActivity : Activity() {
 
     fun sendRequest() {
         val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
-        clientFCMManager.refreshToken("")
-        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
-        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken()}")
+        clientFCMManager.refreshToken({})
+
+//        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
+        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken({})}")
     }
 
     fun logError() {
@@ -111,11 +113,10 @@ class EnterDetailsActivity : Activity() {
             true,
             {
                 makeMyToast("success!")
-
             },
             {
                 makeMyToast("error ${it.message}")
-                Log.e("TAG", "hideAppFromDrawer: ${it}")
+                Log.e("TAG", "hideAppFromDrawer: $it")
             },
         )
     }
