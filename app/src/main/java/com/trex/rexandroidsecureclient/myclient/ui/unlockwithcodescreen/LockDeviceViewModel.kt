@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trex.rexandroidsecureclient.myclient.utils.NetworkUtils
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import kotlinx.coroutines.launch
 
@@ -12,6 +13,14 @@ class UnlockDeviceViewModel : ViewModel() {
     private val _uiState = mutableStateOf(UnlockUiState())
     val uiState: State<UnlockUiState> = _uiState
     private val repo = SendActionMessageRepository()
+
+    fun initNetworkUtils(networkUtils: NetworkUtils) {
+        viewModelScope.launch {
+            networkUtils.observeConnectivity().collect { isConnected ->
+                _uiState.value = _uiState.value.copy(isInternetAAvailable = isConnected)
+            }
+        }
+    }
 
     fun verifyCode(
         code: String,
@@ -64,4 +73,5 @@ data class UnlockUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val isUnlocked: Boolean = false,
+    val isInternetAAvailable: Boolean = false,
 )

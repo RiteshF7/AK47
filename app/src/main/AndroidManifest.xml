@@ -112,9 +112,6 @@
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".myclient.ui.connectwifiscreen.ConnectWifiActivity"
-            android:exported="false" />
 
 
         <receiver

@@ -1,10 +1,13 @@
 package com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -53,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
+import com.trex.rexandroidsecureclient.myclient.utils.NetworkUtils
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.utils.SharedPreferenceManager
@@ -75,6 +79,7 @@ class UnlockWithCodeActivity : ComponentActivity() {
         actionBar?.hide()
         val intentFilter = IntentFilter(STOP_LOCK_TASK)
         val vm: UnlockDeviceViewModel by viewModels()
+        vm.initNetworkUtils(NetworkUtils(this))
 
         registerReceiver(stopLockTaskReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
 
@@ -176,17 +181,41 @@ fun UnlockScreen(
                         onClick = onFinish,
                     )
                 } else {
-                    UnlockButton(text = "Unlock with code", icon = Icons.Default.Done) {
-                        val sp = SharedPreferenceManager(context)
-                        sp.getShopId()?.let { shopId ->
-                            sp.getDeviceId()?.let { deviceId ->
-                                vm.verifyCode(code, shopId, deviceId)
+                    if (!uiState.isInternetAAvailable) {
+                        Box(modifier = Modifier.padding(vertical = 20.dp)) {
+                            UnlockButton(
+                                text = "Connect to WIFI",
+                                icon = Icons.Default.CheckCircle,
+                                onClick = {
+                                    openWifiSettings(context as Activity)
+                                },
+                            )
+                        }
+                    } else {
+                        UnlockButton(text = "Unlock with code", icon = Icons.Default.Done) {
+                            val sp = SharedPreferenceManager(context)
+                            sp.getShopId()?.let { shopId ->
+                                sp.getDeviceId()?.let { deviceId ->
+                                    vm.verifyCode(code, shopId, deviceId)
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+fun openWifiSettings(activity: Activity) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // For Android 10 and above, use the WiFi panel intent
+        val panelIntent = Intent(Settings.Panel.ACTION_WIFI)
+        activity.startActivity(panelIntent)
+    } else {
+        // For older versions, open WiFi settings
+        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+        activity.startActivity(intent)
     }
 }
 
