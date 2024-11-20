@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Done
@@ -202,6 +204,16 @@ fun UnlockScreen(
                         }
                     }
                 }
+
+                UnlockButton(
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    text = "Contact Support",
+                    icon = Icons.Default.Call,
+                ) {
+                    val intent = Intent(Intent.ACTION_DIAL)
+                    intent.setData(Uri.parse("tel:9910000163"))
+                    context.startActivity(intent)
+                }
             }
         }
     }
@@ -273,7 +285,7 @@ fun LockInfoCard(
                 .padding(top = 20.dp),
         colors =
             CardDefaults.cardColors(
-                containerColor = Color.White.copy(alpha = 0.1f),
+                containerColor = Color.Red.copy(alpha = 0.6f),
                 contentColor = Color.White,
             ),
     ) {
@@ -315,7 +327,7 @@ fun LockIcon(uiState: UnlockUiState) {
         shape = RoundedCornerShape(100.dp),
         colors =
             CardDefaults.cardColors(
-                containerColor = Color.White.copy(alpha = 0.1f),
+                containerColor = Color.Red.copy(alpha = 0.8f),
                 contentColor = Color.White,
             ),
     ) {
