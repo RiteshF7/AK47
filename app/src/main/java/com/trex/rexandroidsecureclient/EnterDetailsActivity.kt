@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.ui.connectwifiscreen.ConnectWifiActivity
 import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
@@ -37,7 +38,7 @@ class EnterDetailsActivity : Activity() {
         setContentView(R.layout.activity_enter_details)
         actionBar?.hide()
 //        finish()
-        this.startMyActivity(EmiReminderActivity::class.java, true)
+        this.startMyActivity(ConnectWifiActivity::class.java, true)
 
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
         mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)

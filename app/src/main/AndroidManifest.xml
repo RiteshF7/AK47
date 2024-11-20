@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
@@ -110,6 +112,10 @@
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".myclient.ui.connectwifiscreen.ConnectWifiActivity"
+            android:exported="false" />
+
 
         <receiver
             android:name=".myclient.SMSReceiver"
@@ -173,12 +179,12 @@
             android:name=".SetupManagementLaunchActivity"
             android:exported="true"
             android:targetActivity=".SetupManagementActivity">
-<!--            <intent-filter>-->
-                <!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-                <!--                <category android:name="android.intent.category.INFO" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--                <category android:name="android.intent.category.INFO" />-->
+            <!--            </intent-filter>-->
         </activity-alias>
 
         <activity
