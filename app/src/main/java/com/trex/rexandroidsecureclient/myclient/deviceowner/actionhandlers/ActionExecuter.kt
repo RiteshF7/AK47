@@ -1,11 +1,11 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
 import com.trex.rexnetwork.data.ActionMessageDTO
-import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.data.Actions.ACTION_APP_UNLOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_LOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_UNLOCK
@@ -18,7 +18,6 @@ import com.trex.rexnetwork.data.Actions.ACTION_GET_DEVICE_INFO
 import com.trex.rexnetwork.data.Actions.ACTION_GET_LOCATION
 import com.trex.rexnetwork.data.Actions.ACTION_GET_LOCATION_VIA_MESSAGE
 import com.trex.rexnetwork.data.Actions.ACTION_GET_PHONE_NUMBER
-import com.trex.rexnetwork.data.Actions.ACTION_GET_UNLOCK_CODE
 import com.trex.rexnetwork.data.Actions.ACTION_LOCK_DEVICE
 import com.trex.rexnetwork.data.Actions.ACTION_LOCK_SCREEN
 import com.trex.rexnetwork.data.Actions.ACTION_OFFLINE_LOCK
@@ -85,21 +84,18 @@ class ActionExecuter(
                 ACTION_REBOOT_DEVICE -> rebootDevice(message)
                 ACTION_CALL_LOCK -> callLock(message)
                 ACTION_CALL_UNLOCK -> callUnlock(message)
-
-                ACTION_RESET_PASSWORD -> resetPassword("000000", message)
-                ACTION_REMOVE_DEVICE -> removeDevice()
-                ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
-                ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
-                ACTION_GET_UNLOCK_CODE -> getUnlockCode()
-                ACTION_OFFLINE_LOCK -> offlineLock(message)
-                ACTION_OFFLINE_UNLOCK -> offlineUnlock(message)
-                ACTION_APP_UNLOCK -> appUnlock(message)
-                Actions.ACTION_APP_LOCK -> {}
-
+                ACTION_REMOVE_DEVICE -> removeDevice(message)
                 ACTION_LOCK_SCREEN -> {
                     mDevicePolicyManagerGateway.lockNow({}, {})
                 }
 
+                // v2
+                ACTION_GET_PHONE_NUMBER -> getPhoneNumber()
+                ACTION_RESET_PASSWORD -> resetPassword("000000", message)
+                ACTION_GET_LOCATION_VIA_MESSAGE -> getLocationViaMessage()
+                ACTION_OFFLINE_LOCK -> offlineLock(message)
+                ACTION_OFFLINE_UNLOCK -> offlineUnlock(message)
+                ACTION_APP_UNLOCK -> appUnlock(message)
                 else -> {}
             }
         } catch (error: Exception) {
@@ -112,7 +108,7 @@ class ActionExecuter(
     }
 
     private fun registerDeviceUsingFCM(message: ActionMessageDTO) {
-        RegisterDeviceHandler(context).handle(message)
+        RegisterDeviceHandler(context as Activity).handle(message)
     }
 
     private fun unlockDevice(message: ActionMessageDTO) {
@@ -215,8 +211,7 @@ class ActionExecuter(
         return "Unlock Code"
     }
 
-    private fun removeDevice() {
-        // Implement device removal logic
-        Log.i("ActionExecuter", "Remove device action triggered")
+    private fun removeDevice(actionMessageDTO: ActionMessageDTO) {
+        RemoveDeviceHandler(context).handle(actionMessageDTO)
     }
 }

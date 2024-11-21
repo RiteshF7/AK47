@@ -1,6 +1,7 @@
 package com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers
 
 import DeviceInfoUtil
+import android.app.Activity
 import android.content.Context
 import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.BaseActionHandler
@@ -11,7 +12,7 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 
 class RegisterDeviceHandler(
-    private val context: Context,
+    private val context: Activity,
 ) : BaseActionHandler() {
     private val fcmTokenManager = FCMTokenManager(context, ClientFCMTokenUpdater(context))
     private val deviceInfoUtils = DeviceInfoUtil()

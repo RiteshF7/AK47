@@ -17,17 +17,19 @@
 package com.trex.rexandroidsecureclient;
 
 import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE;
+import static com.trex.rexandroidsecureclient.myclient.ui.InitDeviceRegistrationActivity.REG_DEVICE_REQUEST_CODE;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.Window;
-import android.widget.Button;
 
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter;
+import com.trex.rexandroidsecureclient.myclient.ui.InitDeviceRegistrationActivity;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
 import com.trex.rexnetwork.data.ActionMessageDTO;
@@ -46,7 +48,6 @@ import kotlin.jvm.functions.Function1;
 public class FinalizeActivity extends Activity {
 
     private static final String TAG = FinalizeActivity.class.getSimpleName();
-    private Button finishSetupButton;
     private FCMTokenManager fcmTokenManager;
     private SharedPreferenceManager sharedPreferenceManager;
     private DevicePolicyManagerGatewayImpl mDevicePolicyManagerGateway;
@@ -56,13 +57,27 @@ public class FinalizeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.finalize_activity);
         mDevicePolicyManagerGateway = new DevicePolicyManagerGatewayImpl(this);
+        PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+        if (savedInstanceState == null) {
+            if (Util.isManagedProfileOwner(this)) {
+                ProvisioningUtil.enableProfile(this);
+            }
+        }
+
+        //initial setup
         hideAppFromDrawer();
         blockAppUninstallation();
         setUserRestrictions(mDevicePolicyManagerGateway);
-        fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
+
+
+        //saving shop id
         sharedPreferenceManager = new SharedPreferenceManager(this);
+        String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
+        sharedPreferenceManager.saveShopId(shopId);
+
+        //updating token of device on server
+        fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
         fcmTokenManager.refreshToken(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String s) {
@@ -70,67 +85,30 @@ public class FinalizeActivity extends Activity {
             }
         });
 
-        PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
-
-        //saving shop id
-        String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
-        sharedPreferenceManager.saveShopId(shopId);
-
-
-        if (savedInstanceState == null) {
-            if (Util.isManagedProfileOwner(this)) {
-                ProvisioningUtil.enableProfile(this);
-            }
+        if (Util.isDeviceOwner(this)) {
+            InitDeviceRegistrationActivity.Companion.go(this);
         }
 
-        finishSetupButton = findViewById(R.id.btn_complete_setup);
 
-        finishSetupButton.setOnClickListener(view -> {
-            Boolean isRegComplete = sharedPreferenceManager.getRegCompleteStatus();
-            if (isRegComplete) {
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REG_DEVICE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 setResult(RESULT_OK);
                 finish();
-            } else {
-                initDeviceRegistration();
             }
-        });
-
-
-//        createDeviceButton.setOnClickListener(view -> {
-//            hideKeyboard();
-//            deviceBuilderUtils.saveImei(imeiEditText.getText().toString().trim());
-//            processProgessUi();
-//            deviceBuilderUtils.createDevice(aBoolean -> {
-//                runOnUiThread(() -> {
-//                    if (aBoolean) {
-//                        processSuccessUI();
-//                    } else {
-//                        processFailureUi();
-//                        Toast.makeText(this, "Something went wrong! Please try again.", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//                return null;
-//            });
-//        });
-
-
-//        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
-//            Log.i(TAG, "Automatically provisioning device onwer");
-//            onNavigateNext(null);
-//            return;
-//        }
-
-
-        Util.isDeviceOwner(this);
-
+            else {
+                if (Util.isDeviceOwner(this)) {
+                    InitDeviceRegistrationActivity.Companion.go(this);
+                }
+            }
+        }
     }
 
-    void initDeviceRegistration() {
-        ActionMessageDTO regAction = new ActionMessageDTO("", Actions.ACTION_REG_DEVICE, new HashMap<>(), false, UUID.randomUUID().toString());
-        new ActionExecuter(this).sendActionToShop(regAction);
 
-    }
 
     public void blockAppUninstallation() {
         // Success callback

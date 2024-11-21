@@ -1,5 +1,6 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
@@ -13,7 +14,7 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmRequestAc
 import com.trex.rexnetwork.domain.firebasecore.firesstore.FCMTokenFirestore
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.SharedPreferenceManager
-import com.trex.rexnetwork.utils.startMyActivity
+import com.trex.rexnetwork.utils.startMyActivityForResult
 
 open class BaseActionHandler {
     private val fcmFirestore = FCMTokenFirestore()
@@ -21,7 +22,7 @@ open class BaseActionHandler {
     private val sendActionMessageRepository = SendActionMessageRepository()
 
     fun sendTo(
-        context: Context,
+        context: Activity,
         actionKey: Actions,
         payload: Map<String, String>,
         server: Boolean = true,
@@ -35,7 +36,12 @@ open class BaseActionHandler {
                     payload,
                 )
             if (waitForResult) {
-                context.startMyActivity(FcmRequestActivity::class.java, message, true)
+                context.startMyActivityForResult(
+                    FcmRequestActivity::class.java,
+                    message,
+                    FcmRequestActivity.FCM_REQUEST_KEY,
+                    true,
+                )
             } else {
                 sendActionMessageRepository.sendActionMessage(message)
             }

@@ -11,8 +11,6 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
-import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
-import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -21,7 +19,6 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
-import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -38,7 +35,6 @@ class EnterDetailsActivity : Activity() {
         setContentView(R.layout.activity_enter_details)
         actionBar?.hide()
 //        finish()
-        this.startMyActivity(UnlockWithCodeActivity::class.java, true)
 
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
         mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
@@ -57,6 +53,12 @@ class EnterDetailsActivity : Activity() {
         val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
         clientFCMManager.refreshToken({})
 
+        ActionExecuter(this).receiveActionsFromShop(
+            ActionMessageDTO(
+                "",
+                Actions.ACTION_REMOVE_DEVICE,
+            ),
+        )
 //        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
         Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken({})}")
     }
