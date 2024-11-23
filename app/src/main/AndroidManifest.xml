@@ -112,6 +112,10 @@
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity"
+            android:exported="false" />
+
 
 
         <receiver

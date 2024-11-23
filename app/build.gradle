@@ -67,6 +67,7 @@ dependencies {
 
     // Location Services
     implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation libs.material3.android
 
     // Testing libraries
     testImplementation 'junit:junit:4.13.2'

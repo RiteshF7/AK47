@@ -17,10 +17,8 @@
 package com.trex.rexandroidsecureclient;
 
 import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE;
-import static com.trex.rexandroidsecureclient.myclient.ui.InitDeviceRegistrationActivity.REG_DEVICE_REQUEST_CODE;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.os.UserManager;
@@ -28,18 +26,13 @@ import android.util.Log;
 import android.view.Window;
 
 import com.trex.rexandroidsecureclient.common.Util;
-import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter;
-import com.trex.rexandroidsecureclient.myclient.ui.InitDeviceRegistrationActivity;
+import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity;
 import com.trex.rexandroidsecureclient.provision.ProvisioningUtil;
 import com.trex.rexnetwork.Constants;
-import com.trex.rexnetwork.data.ActionMessageDTO;
-import com.trex.rexnetwork.data.Actions;
 import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater;
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager;
 import com.trex.rexnetwork.utils.SharedPreferenceManager;
 
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import kotlin.Unit;
@@ -58,23 +51,26 @@ public class FinalizeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDevicePolicyManagerGateway = new DevicePolicyManagerGatewayImpl(this);
-        PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+
+
         if (savedInstanceState == null) {
             if (Util.isManagedProfileOwner(this)) {
                 ProvisioningUtil.enableProfile(this);
             }
         }
 
+        //saving shop id
+        PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
+        sharedPreferenceManager = new SharedPreferenceManager(this);
+        String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
+        sharedPreferenceManager.saveShopId(shopId);
+
+
         //initial setup
         hideAppFromDrawer();
         blockAppUninstallation();
         setUserRestrictions(mDevicePolicyManagerGateway);
 
-
-        //saving shop id
-        sharedPreferenceManager = new SharedPreferenceManager(this);
-        String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
-        sharedPreferenceManager.saveShopId(shopId);
 
         //updating token of device on server
         fcmTokenManager = new FCMTokenManager(this, new ClientFCMTokenUpdater(this));
@@ -84,30 +80,11 @@ public class FinalizeActivity extends Activity {
                 return null;
             }
         });
-
-        if (Util.isDeviceOwner(this)) {
-            InitDeviceRegistrationActivity.Companion.go(this);
-        }
-
+        InitDeviceRegistrationActivity.Companion.go(this);
+        setResult(RESULT_OK);
+        finish();
 
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REG_DEVICE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                setResult(RESULT_OK);
-                finish();
-            }
-            else {
-                if (Util.isDeviceOwner(this)) {
-                    InitDeviceRegistrationActivity.Companion.go(this);
-                }
-            }
-        }
-    }
-
 
 
     public void blockAppUninstallation() {

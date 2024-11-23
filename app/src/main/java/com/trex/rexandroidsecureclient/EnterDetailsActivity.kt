@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -39,12 +40,17 @@ class EnterDetailsActivity : Activity() {
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
         mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
         saveInitialData()
+
         retryBtn.setOnClickListener {
-            sendRequest()
+            InitDeviceRegistrationActivity.go(this);
+            finish()
+
         }
     }
 
     fun saveInitialData() {
+        sharedPreferenceManager.saveRegCompleteStatus("")
+
         sharedPreferenceManager.saveShopId("+919910000163")
         sharedPreferenceManager.saveDeviceId("456789012345678")
     }

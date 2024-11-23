@@ -36,6 +36,7 @@ open class BaseActionHandler {
                     payload,
                 )
             if (waitForResult) {
+
                 context.startMyActivityForResult(
                     FcmRequestActivity::class.java,
                     message,
