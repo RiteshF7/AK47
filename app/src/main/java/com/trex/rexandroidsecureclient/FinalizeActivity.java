@@ -24,6 +24,7 @@ import android.os.PersistableBundle;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity;
@@ -67,9 +68,9 @@ public class FinalizeActivity extends Activity {
 
 
         //initial setup
-        hideAppFromDrawer();
-        blockAppUninstallation();
-        setUserRestrictions(mDevicePolicyManagerGateway);
+//        hideAppFromDrawer();
+//        blockAppUninstallation();
+//        setUserRestrictions(mDevicePolicyManagerGateway);
 
 
         //updating token of device on server
@@ -77,6 +78,7 @@ public class FinalizeActivity extends Activity {
         fcmTokenManager.refreshToken(new Function1<String, Unit>() {
             @Override
             public Unit invoke(String s) {
+
                 return null;
             }
         });
