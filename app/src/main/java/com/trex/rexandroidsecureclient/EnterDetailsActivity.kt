@@ -44,8 +44,8 @@ class EnterDetailsActivity : Activity() {
         saveInitialData()
 
         retryBtn.setOnClickListener {
-            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
-//            InitDeviceRegistrationActivity.go(this)
+//            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
+            InitDeviceRegistrationActivity.go(this)
             finish()
         }
     }
@@ -54,7 +54,7 @@ class EnterDetailsActivity : Activity() {
         sharedPreferenceManager.saveRegCompleteStatus("")
 
         sharedPreferenceManager.saveShopId("+919910000163")
-        sharedPreferenceManager.saveDeviceId("456789012345678")
+        sharedPreferenceManager.saveDeviceId("1")
     }
 
     fun sendRequest() {

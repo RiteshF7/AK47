@@ -146,7 +146,7 @@ fun UnlockScreen(
                 )
             }
 
-            if (!uiState.isUnlocked) {
+            if (!uiState.isUnlocked || !uiState.isInternetAAvailable) {
                 OutlinedTextField(
                     value = code,
                     onValueChange = { code = it },
@@ -190,6 +190,17 @@ fun UnlockScreen(
                                 icon = Icons.Default.CheckCircle,
                                 onClick = {
                                     openWifiSettings(context as Activity)
+                                },
+                            )
+                        }
+                        Box(modifier = Modifier.padding(vertical = 20.dp)) {
+                            UnlockButton(
+                                text = "Unlock with offline code",
+                                icon = Icons.Default.CheckCircle,
+                                onClick = {
+                                    val sp = SharedPreferenceManager(context)
+                                    val masterCode = sp.getMasterUnlockCode()
+                                    vm.unlockWithMasterCode(code, masterCode)
                                 },
                             )
                         }

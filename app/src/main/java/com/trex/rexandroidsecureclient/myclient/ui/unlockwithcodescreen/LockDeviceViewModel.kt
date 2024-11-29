@@ -66,6 +66,21 @@ class UnlockDeviceViewModel : ViewModel() {
                 isLoading = false,
             )
     }
+
+    fun unlockWithMasterCode(
+        enteredCode: String,
+        offlineCode: String,
+    ) {
+        if (enteredCode == offlineCode) {
+            handleSuccessfulUnlock()
+        } else {
+            _uiState.value =
+                _uiState.value.copy(
+                    error = "Incorrect code. Please try again.",
+                    isLoading = false,
+                )
+        }
+    }
 }
 
 // UI State

@@ -11,10 +11,15 @@ import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
 import com.trex.rexnetwork.Constants
-import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
-import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
+import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
+import com.trex.rexnetwork.utils.NetworkMonitor
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class MyApplication : Application() {
+    private lateinit var networkMonitor: NetworkMonitor
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
+    private val sendActionMessageRepository = SendActionMessageRepository()
+
     companion object {
         private var instance: MyApplication? = null
         const val TAG = "APPLICATION CLASS"
@@ -37,13 +42,35 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        networkMonitor = NetworkMonitor(this)
+        sharedPreferenceManager = SharedPreferenceManager(this)
         Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
         instance = this
         initPayloadReceiver()
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
+        registerNetworkMonitor()
     }
 
+    override fun onTerminate() {
+        super.onTerminate()
+        networkMonitor.stopMonitoring()
+    }
+
+    private fun registerNetworkMonitor() {
+        networkMonitor.startMonitoring {
+            sharedPreferenceManager.getShopId()?.let { shopId ->
+                sharedPreferenceManager.getDeviceId()?.let { deviceId ->
+                    sendActionMessageRepository.updateMasterCode(
+                        shopId,
+                        deviceId,
+                    ) { newMasterCode ->
+                        sharedPreferenceManager.setMasterUnlockCode(newMasterCode)
+                    }
+                }
+            }
+        }
+    }
 
     private fun initPayloadReceiver() {
         val receiver = PayloadReceiver()
