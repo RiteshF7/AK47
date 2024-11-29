@@ -12,7 +12,6 @@ import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity
-import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -21,7 +20,6 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
-import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -68,7 +66,7 @@ class EnterDetailsActivity : Activity() {
             ),
         )
 //        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
-        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFcmToken({})}")
+        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFCMToken( {})}")
     }
 
     fun logError() {

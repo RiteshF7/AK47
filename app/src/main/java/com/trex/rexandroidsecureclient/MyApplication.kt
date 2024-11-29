@@ -10,6 +10,7 @@ import android.os.Build
 import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
+import com.trex.rexandroidsecureclient.myclient.utils.FCMCheckWorker
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.NetworkMonitor
@@ -50,6 +51,8 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
         registerNetworkMonitor()
+        FCMCheckWorker.enqueuePeriodicWork(this)
+
     }
 
     override fun onTerminate() {

@@ -2,7 +2,7 @@ package com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers
 
 import DeviceInfoUtil
 import android.app.Activity
-import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.BaseActionHandler
 import com.trex.rexnetwork.data.ActionMessageDTO
@@ -19,16 +19,23 @@ class RegisterDeviceHandler(
 
     fun handle(message: ActionMessageDTO) {
         val deviceModel = "${deviceInfoUtils.getManufacturer()} ${deviceInfoUtils.getDeviceModel()}"
-        fcmTokenManager.getFcmToken { fcmToken ->
-            val deviceInfo = DeviceInfo(fcmToken, deviceModel)
-            val deviceInfoString = Gson().toJson(deviceInfo)
-            sendTo(
-                context,
-                message.action,
-                mapOf(
-                    Actions.ACTION_REG_DEVICE.name to deviceInfoString,
-                ),
-                waitForResult = true,
+        fcmTokenManager.getFCMToken { result ->
+            result.fold(
+                onSuccess = { token ->
+                    val deviceInfo = DeviceInfo(token, deviceModel)
+                    val deviceInfoString = Gson().toJson(deviceInfo)
+                    sendTo(
+                        context,
+                        message.action,
+                        mapOf(
+                            Actions.ACTION_REG_DEVICE.name to deviceInfoString,
+                        ),
+                        waitForResult = true,
+                    )
+                },
+                onFailure = { exception ->
+                    Log.e("FCM", "Failed to get token", exception)
+                },
             )
         }
     }
