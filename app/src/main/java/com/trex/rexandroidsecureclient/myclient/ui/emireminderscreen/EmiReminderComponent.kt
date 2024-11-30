@@ -1,5 +1,6 @@
 package com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,124 +25,136 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.trex.rexandroidsecureclient.R
 
-class EmiReminderComponents {
-    @Composable
-    fun MainScreen(
-        amount: Double,
-        dueDate: String,
-        onDismiss: () -> Unit,
+@Composable
+fun MainScreen(
+    amount: Double,
+    dueDate: String,
+    onDismiss: () -> Unit,
+) {
+    val urgentRed = Color(0xFFD32F2F)
+    val warningYellow = Color(0xFFFFB74D)
+    val darkOverlay = Color(0xFF1A1A1A)
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(darkOverlay)
+                .padding(16.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        val customGreen = colorResource(R.color.primary)
-
-        Box(
+        Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp),
-            contentAlignment = Alignment.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            Column(
+            // Pulsating Warning Icon
+            Box(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                        .size(180.dp)
+                        .clip(CircleShape)
+                        .background(urgentRed.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center,
             ) {
-                // Circular Warning Icon
-                Box(
-                    modifier =
-                        Modifier
-                            .size(180.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 1f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Warning Icon",
-                        tint = Color.Red,
-                        modifier = Modifier.size(108.dp),
-                    )
-                }
-
-                Text(
-                    text = "Payment Reminder",
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center,
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = "Warning Icon",
+                    tint = warningYellow,
+                    modifier = Modifier.size(108.dp),
                 )
+            }
 
-                // Card for description
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.1f),
-                        ),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = "Your EMI payment is due",
-                            color = Color.White,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                        )
+            Text(
+                text = "URGENT PAYMENT REQUIRED",
+                color = urgentRed,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
 
-                        Text(
-                            text = "Please note that your device will be locked if payment is not received by the due date.",
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 24.sp,
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = onDismiss,
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = customGreen,
-                        ),
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(48.dp),
+            // Card for description with warning border
+            Card(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = darkOverlay.copy(alpha = 0.9f),
+                    ),
+                border = BorderStroke(2.dp, urgentRed),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Remind Me Later",
+                        text = "IMMEDIATE ACTION REQUIRED",
+                        color = warningYellow,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                    )
+
+                    if (amount != 0.0 && dueDate.isNotBlank()) {
+                        Text(
+                            text = "₹${amount.toInt()}",
+                            color = Color.White,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+
+                        Text(
+                            text = "Due Date: $dueDate",
+                            color = urgentRed,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "⚠️ YOUR DEVICE WILL BE AUTOMATICALLY LOCKED IF PAYMENT FOR YOUR PHONE EMI IS NOT RECEIVED BY THE DUE DATE  ⚠️",
                         color = Color.White,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
-        }
-    }
 
-    @Composable
-    fun PreviewEMIReminderScreen() {
-        MainScreen(
-            amount = 15000.00,
-            dueDate = "25th November 2024",
-            onDismiss = {},
-        )
+            Button(
+                onClick = onDismiss,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = urgentRed,
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(56.dp),
+            ) {
+                Text(
+                    text = "I Understand - Remind Later",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
     }
 }

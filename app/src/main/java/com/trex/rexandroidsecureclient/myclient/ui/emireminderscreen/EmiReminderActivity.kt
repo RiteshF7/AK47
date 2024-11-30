@@ -36,7 +36,8 @@ class EmiReminderActivity : ComponentActivity() {
                 .background(color = Color.Black.copy(alpha = 0.85f))
                 .fillMaxSize(),
         ) {
-            EmiReminderComponents().MainScreen(2.0, "11/20/2040") {
+            MainScreen(0.0, "") {
+                finish()
             }
         }
     }

@@ -51,7 +51,7 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
         registerNetworkMonitor()
-        FCMCheckWorker.enqueuePeriodicWork(this)
+//        FCMCheckWorker.enqueuePeriodicWork(this)
 
     }
 

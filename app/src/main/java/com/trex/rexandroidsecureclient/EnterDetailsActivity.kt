@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
 import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
@@ -20,6 +21,7 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
+import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -42,9 +44,9 @@ class EnterDetailsActivity : Activity() {
         saveInitialData()
 
         retryBtn.setOnClickListener {
-//            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
-            InitDeviceRegistrationActivity.go(this)
-            finish()
+            this.startMyActivity(EmiReminderActivity::class.java, true)
+//            InitDeviceRegistrationActivity.go(this)
+//            finish()
         }
     }
 
