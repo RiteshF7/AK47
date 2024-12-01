@@ -11,17 +11,16 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
-import com.trex.rexandroidsecureclient.myclient.ui.emireminderscreen.EmiReminderActivity
-import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
+import com.trex.rexnetwork.domain.repositories.DevicePresenceRepo
+import com.trex.rexnetwork.domain.repositories.DeviceRegistration
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
-import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -44,7 +43,10 @@ class EnterDetailsActivity : Activity() {
         saveInitialData()
 
         retryBtn.setOnClickListener {
-            this.startMyActivity(EmiReminderActivity::class.java, true)
+            val deviceRegistration = DeviceRegistration("1", "+919910000163")
+            DevicePresenceRepo().registerPresenceMonitoring(deviceRegistration)
+
+//            this.startMyActivity(EmiReminderActivity::class.java, true)
 //            InitDeviceRegistrationActivity.go(this)
 //            finish()
         }
@@ -54,7 +56,7 @@ class EnterDetailsActivity : Activity() {
         sharedPreferenceManager.saveRegCompleteStatus("")
 
         sharedPreferenceManager.saveShopId("+919910000163")
-        sharedPreferenceManager.saveDeviceId("1")
+        sharedPreferenceManager.saveDeviceId("")
     }
 
     fun sendRequest() {
@@ -68,7 +70,7 @@ class EnterDetailsActivity : Activity() {
             ),
         )
 //        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
-        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFCMToken( {})}")
+        Log.e("oooo", "onCreate: Token ${clientFCMManager.getFCMToken({})}")
     }
 
     fun logError() {
