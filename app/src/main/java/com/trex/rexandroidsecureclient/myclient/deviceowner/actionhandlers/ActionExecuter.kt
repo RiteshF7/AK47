@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
+import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions.ACTION_APP_UNLOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_LOCK
@@ -31,6 +32,7 @@ import com.trex.rexnetwork.data.Actions.ACTION_SET_WALLPAPER
 import com.trex.rexnetwork.data.Actions.ACTION_UNLOCK_DEVICE
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.FcmResultActivity
 import com.trex.rexnetwork.domain.firebasecore.firesstore.FCMTokenFirestore
+import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.isGetRequest
 import com.trex.rexnetwork.utils.startMyActivity
@@ -68,6 +70,10 @@ class ActionExecuter(
     }
 
     fun receiveActionsFromShop(message: ActionMessageDTO) {
+        if (message.payload[message.action.name] == Constants.IS_TEST_MESSAGE) {
+            sendTestResponse(message)
+            return
+        }
         try {
             when (message.action) {
                 ACTION_GET_CONTACTS -> GetContactsHandler(context).handle(message)
@@ -100,6 +106,20 @@ class ActionExecuter(
             }
         } catch (error: Exception) {
             Log.e("ActionExecuterError", "execute: ${error.message}")
+        }
+    }
+
+    private fun sendTestResponse(message: ActionMessageDTO) {
+        sharedPreferenceManager.getShopId()?.let { shopId ->
+            fcmFirestore.getFcmToken(shopId) { shopToken ->
+                val payload =
+                    mapOf(
+                        Constants.KEY_RESPOSE_RESULT_STATUS to Constants.RESPONSE_RESULT_SUCCESS,
+                        message.action.name to Constants.IS_TEST_MESSAGE,
+                    )
+                val testResponse = message.copy(fcmToken = shopToken, payload = payload)
+                SendActionMessageRepository().sendActionMessage(testResponse)
+            }
         }
     }
 

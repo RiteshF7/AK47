@@ -106,7 +106,7 @@ open class BaseActionHandler {
         sendResponseToShop(response)
     }
 
-    fun getShopFcmToken(onSuccess: (String) -> Unit) {
+    private fun getShopFcmToken(onSuccess: (String) -> Unit) {
         mSharedPref.getShopId()?.let { shopId ->
             fcmFirestore.getFcmToken(shopId) { shopToken ->
                 onSuccess(shopToken)
