@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -21,9 +22,11 @@ import com.trex.rexnetwork.domain.repositories.DevicePresenceRepo
 import com.trex.rexnetwork.domain.repositories.DeviceRegistration
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
+import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
+    private lateinit var stopBtn: Button
 
     // Dependencies
     private val sharedPreferenceManager by lazy {
@@ -39,14 +42,19 @@ class EnterDetailsActivity : Activity() {
 //        finish()
 
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
+        stopBtn = findViewById(R.id.btn_reg_dev_stop)
         mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
         saveInitialData()
+
+        stopBtn.setOnClickListener {
+            DevicePresenceRepo().stopPresenceMonitoring("1")
+        }
 
         retryBtn.setOnClickListener {
             val deviceRegistration = DeviceRegistration("1", "+919910000163")
             DevicePresenceRepo().registerPresenceMonitoring(deviceRegistration)
 
-//            this.startMyActivity(EmiReminderActivity::class.java, true)
+            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
 //            InitDeviceRegistrationActivity.go(this)
 //            finish()
         }

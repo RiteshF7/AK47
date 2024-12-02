@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trex.rexandroidsecureclient.myclient.utils.NetworkUtils
+import com.trex.rexnetwork.domain.firebasecore.firesstore.ShopFirestore
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import kotlinx.coroutines.launch
 
@@ -13,6 +14,7 @@ class UnlockDeviceViewModel : ViewModel() {
     private val _uiState = mutableStateOf(UnlockUiState())
     val uiState: State<UnlockUiState> = _uiState
     private val repo = SendActionMessageRepository()
+    private val shopRepo = ShopFirestore()
 
     fun initNetworkUtils(networkUtils: NetworkUtils) {
         viewModelScope.launch {
@@ -20,6 +22,12 @@ class UnlockDeviceViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(isInternetAAvailable = isConnected)
             }
         }
+    }
+
+    fun updateShopNumber(shopId: String) {
+        shopRepo.getShopById(shopId, { shop ->
+            _uiState.value = _uiState.value.copy(shopPhoneNumber = shop.shopPhoneNumber)
+        }, {})
     }
 
     fun verifyCode(
@@ -89,4 +97,5 @@ data class UnlockUiState(
     val error: String? = null,
     val isUnlocked: Boolean = false,
     val isInternetAAvailable: Boolean = false,
+    val shopPhoneNumber: String = "",
 )

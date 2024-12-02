@@ -5,10 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -65,6 +65,7 @@ import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 // Usage in Activity
 class UnlockWithCodeActivity : ComponentActivity() {
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val stopLockTaskReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
@@ -79,8 +80,12 @@ class UnlockWithCodeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar?.hide()
+        sharedPreferenceManager = SharedPreferenceManager(this)
         val intentFilter = IntentFilter(STOP_LOCK_TASK)
         val vm: UnlockDeviceViewModel by viewModels()
+        sharedPreferenceManager.getShopId()?.let { shopId ->
+            vm.updateShopNumber(shopId)
+        }
         vm.initNetworkUtils(NetworkUtils(this))
 
         registerReceiver(stopLockTaskReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
@@ -216,14 +221,18 @@ fun UnlockScreen(
                     }
                 }
 
+
                 UnlockButton(
                     modifier = Modifier.padding(vertical = 20.dp),
-                    text = "Contact Support",
+                    text = "Contact Support @${uiState.shopPhoneNumber} :: +9910000163",
                     icon = Icons.Default.Call,
                 ) {
-                    val intent = Intent(Intent.ACTION_DIAL)
-                    intent.setData(Uri.parse("tel:9910000163"))
-                    context.startActivity(intent)
+                    Toast
+                        .makeText(
+                            context,
+                            "Please call on the number given above.",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
             }
         }
