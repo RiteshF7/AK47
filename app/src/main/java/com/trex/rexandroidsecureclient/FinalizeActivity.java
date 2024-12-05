@@ -24,7 +24,6 @@ import android.os.PersistableBundle;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.trex.rexandroidsecureclient.common.Util;
 import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity;
@@ -64,7 +63,9 @@ public class FinalizeActivity extends Activity {
         PersistableBundle extras = getIntent().getParcelableExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE);
         sharedPreferenceManager = new SharedPreferenceManager(this);
         String shopId = extras.getString(Constants.ADMIN_SHOP_ID);
+        String deviceId = extras.getString(Constants.ADMIN_DEVICE_ID);
         sharedPreferenceManager.saveShopId(shopId);
+        sharedPreferenceManager.saveDeviceId(deviceId);
 
 
         //initial setup

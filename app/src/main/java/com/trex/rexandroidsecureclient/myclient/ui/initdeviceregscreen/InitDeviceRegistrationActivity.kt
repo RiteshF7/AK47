@@ -2,6 +2,7 @@ package com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,26 +12,37 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
-import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
+import com.trex.rexnetwork.data.NewDevice
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
+import com.trex.rexnetwork.domain.firebasecore.firesstore.DeviceFirestore
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.startMyActivity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +58,10 @@ sealed class InitRegUiState {
     data class RegFailed(
         val error: String? = null,
     ) : InitRegUiState()
+
+    data class InputState(
+        val imei: String = "",
+    ) : InitRegUiState()
 }
 
 class InitDeviceRegistrationActivity : ComponentActivity() {
@@ -55,7 +71,6 @@ class InitDeviceRegistrationActivity : ComponentActivity() {
         }
     }
 
-    private var isInitilized = false
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val viewModel: InitDeviceRegViewModel by viewModels()
 
@@ -67,7 +82,9 @@ class InitDeviceRegistrationActivity : ComponentActivity() {
         setContent {
             DeviceRegistrationScreen(
                 viewModel = viewModel,
-                onRetry = { viewModel.initRegistration(this) },
+                onRetry = {
+                    viewModel.retry()
+                },
                 onFinish = {
                     setResult(RESULT_OK)
                     finish()
@@ -75,23 +92,17 @@ class InitDeviceRegistrationActivity : ComponentActivity() {
             )
         }
     }
+}
 
-    override fun onResume() {
-        super.onResume()
-        val isDeviceRegCompleted = sharedPreferenceManager.getRegCompleteStatus()
-        if (isDeviceRegCompleted == Constants.RESPONSE_RESULT_SUCCESS) {
-            viewModel.onRegistrationSuccess()
-        }
-        if (isDeviceRegCompleted == Constants.RESPONSE_RESULT_FAILED) {
-            viewModel.onRegistrationFailed()
-        }
-
-        if (!isInitilized) {
-            if (isDeviceRegCompleted.isBlank()) {
-                viewModel.initRegistration(this)
-            }
-            isInitilized = true
-        }
+@Composable
+fun LoadingIndicator(message: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        CircularProgressIndicator(color = colorResource(R.color.primary))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = message, textAlign = TextAlign.Center)
     }
 }
 
@@ -102,6 +113,7 @@ fun DeviceRegistrationScreen(
     onFinish: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     Scaffold { paddingValues ->
         Box(
             modifier =
@@ -112,6 +124,14 @@ fun DeviceRegistrationScreen(
             contentAlignment = Alignment.Center,
         ) {
             when (val state = uiState) {
+                is InitRegUiState.InputState -> {
+                    ImeiInputScreen(
+                        imei = state.imei,
+                        onImeiChange = { viewModel.updateImei(it) },
+                        onSubmit = { viewModel.initRegistration(context, state.imei) },
+                    )
+                }
+
                 is InitRegUiState.RegInit -> {
                     LoadingIndicator("Initializing Registration...")
                 }
@@ -132,34 +152,119 @@ fun DeviceRegistrationScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoadingIndicator(message: String) {
+fun ImeiInputScreen(
+    imei: String,
+    onImeiChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+) {
     Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        CircularProgressIndicator(color = colorResource(R.color.primary))
+        OutlinedTextField(
+            value = imei,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            onValueChange = onImeiChange,
+            label = { Text("Enter IMEI") },
+            singleLine = true,
+            colors =
+                TextFieldDefaults.outlinedTextFieldColors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    containerColor = Color.Transparent,
+                    unfocusedBorderColor = Color.White,
+                    focusedBorderColor = colorResource(R.color.primary),
+                    unfocusedLabelColor = Color.White,
+                    focusedLabelColor = colorResource(R.color.primary),
+                ),
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = message, textAlign = TextAlign.Center)
+
+        Button(
+            onClick = onSubmit,
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.primary),
+                ),
+        ) {
+            Text("Register Device")
+        }
     }
 }
 
-// ViewModel remains the same as in previous example
 class InitDeviceRegViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow<InitRegUiState>(InitRegUiState.RegInit)
+    private val _uiState = MutableStateFlow<InitRegUiState>(InitRegUiState.InputState())
     val uiState: StateFlow<InitRegUiState> = _uiState.asStateFlow()
 
-    fun initRegistration(context: Context) {
-        val regAction =
-            ActionMessageDTO(
-                "",
-                Actions.ACTION_REG_DEVICE,
-                HashMap(),
-                false,
-                UUID.randomUUID().toString(),
-            )
-        ActionExecuter(context).sendActionToShop(regAction)
+    fun updateImei(imei: String) {
+        _uiState.value = InitRegUiState.InputState(imei)
+    }
+
+    fun retry() {
+        _uiState.value = InitRegUiState.InputState()
+    }
+
+    fun initRegistration(
+        context: Context,
+        imei: String,
+    ) {
+        if (imei.isBlank()) {
+            _uiState.value = InitRegUiState.RegFailed("IMEI cannot be empty")
+            return
+        }
         _uiState.value = InitRegUiState.RegInit
+        createDevice(context, imei)
+    }
+
+    private fun createDevice(
+        context: Context,
+        imei: String,
+    ) {
+        val sharedPreferenceManager = SharedPreferenceManager(context)
+        val fcmTokenManager = FCMTokenManager(context, ClientFCMTokenUpdater(context))
+
+        sharedPreferenceManager.getShopId()?.let { shopId ->
+            val deviceFirestore = DeviceFirestore(shopId)
+            sharedPreferenceManager.getDeviceId()?.let { deviceId ->
+                val newDevice = NewDevice()
+                newDevice.shopId = shopId
+                newDevice.deviceId = deviceId
+                newDevice.imeiOne = imei
+
+                deviceFirestore.createOrUpdateDevice(deviceId, newDevice, {
+                    fcmTokenManager.refreshToken { deviceToken ->
+                        val regAction =
+                            ActionMessageDTO(
+                                "",
+                                Actions.ACTION_REG_DEVICE,
+                                HashMap(),
+                                false,
+                                UUID.randomUUID().toString(),
+                            )
+                        ActionExecuter(context).sendActionToShop(regAction)
+                    }
+
+                    Toast
+                        .makeText(
+                            context,
+                            "Device registered successfully!",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    onRegistrationSuccess()
+                }, {
+                    onRegistrationFailed()
+                })
+            } ?: run { onRegistrationFailed() }
+        } ?: run { onRegistrationFailed() }
     }
 
     fun onRegistrationSuccess() {

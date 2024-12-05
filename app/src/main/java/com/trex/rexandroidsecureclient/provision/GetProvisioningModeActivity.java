@@ -28,10 +28,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.core.app.ActivityCompat;
 
@@ -53,14 +51,16 @@ public class GetProvisioningModeActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
-            Log.i(TAG, "Automatically provisioning device owner");
-            onDoButtonClick(null);
-        }
-
-        setContentView(R.layout.activity_get_provisioning_mode);
-        final LinearLayout layout = findViewById(R.id.dpc_login);
-        showRelevantProvisioningOptions(layout);
+//        if (ProvisioningUtil.isAutoProvisioningDeviceOwnerMode()) {
+//            Log.i(TAG, "Automatically provisioning device owner");
+//            onDoButtonClick(null);
+//        }
+//
+//
+//        setContentView(R.layout.activity_get_provisioning_mode);
+//        final LinearLayout layout = findViewById(R.id.dpc_login);
+//        showRelevantProvisioningOptions(layout);
+        onDoButtonClick(null);
     }
 
     @Override

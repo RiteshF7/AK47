@@ -10,19 +10,22 @@ import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.data.DeviceInfo
 import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class RegisterDeviceHandler(
     private val context: Activity,
 ) : BaseActionHandler() {
     private val fcmTokenManager = FCMTokenManager(context, ClientFCMTokenUpdater(context))
     private val deviceInfoUtils = DeviceInfoUtil()
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
+    private val deviceId = sharedPreferenceManager.getDeviceId() ?: ""
 
     fun handle(message: ActionMessageDTO) {
         val deviceModel = "${deviceInfoUtils.getManufacturer()} ${deviceInfoUtils.getDeviceModel()}"
         fcmTokenManager.getFCMToken { result ->
             result.fold(
                 onSuccess = { token ->
-                    val deviceInfo = DeviceInfo(token, deviceModel)
+                    val deviceInfo = DeviceInfo(token, deviceModel, deviceId)
                     val deviceInfoString = Gson().toJson(deviceInfo)
                     sendTo(
                         context,
@@ -30,7 +33,7 @@ class RegisterDeviceHandler(
                         mapOf(
                             Actions.ACTION_REG_DEVICE.name to deviceInfoString,
                         ),
-                        waitForResult = true,
+                        waitForResult = false,
                     )
                 },
                 onFailure = { exception ->
