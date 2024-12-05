@@ -25,7 +25,7 @@ class RegisterDeviceHandler(
         fcmTokenManager.getFCMToken { result ->
             result.fold(
                 onSuccess = { token ->
-                    val deviceInfo = DeviceInfo(token, deviceModel, deviceId)
+                    val deviceInfo = DeviceInfo(deviceId)
                     val deviceInfoString = Gson().toJson(deviceInfo)
                     sendTo(
                         context,

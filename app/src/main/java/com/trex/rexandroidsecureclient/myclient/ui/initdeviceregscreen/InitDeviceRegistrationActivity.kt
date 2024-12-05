@@ -1,7 +1,9 @@
 package com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen
 
+import DeviceInfoUtil
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,6 +45,8 @@ import com.trex.rexnetwork.data.NewDevice
 import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.firesstore.DeviceFirestore
+import com.trex.rexnetwork.domain.firebasecore.firesstore.Shop
+import com.trex.rexnetwork.domain.firebasecore.firesstore.ShopFirestore
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.startMyActivity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -204,13 +208,17 @@ fun ImeiInputScreen(
 class InitDeviceRegViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<InitRegUiState>(InitRegUiState.InputState())
     val uiState: StateFlow<InitRegUiState> = _uiState.asStateFlow()
-
+    var maxRetryCount = 3
     fun updateImei(imei: String) {
         _uiState.value = InitRegUiState.InputState(imei)
     }
 
     fun retry() {
+        if (maxRetryCount<0){
+
+        }
         _uiState.value = InitRegUiState.InputState()
+        maxRetryCount--
     }
 
     fun initRegistration(
@@ -231,6 +239,8 @@ class InitDeviceRegViewModel : ViewModel() {
     ) {
         val sharedPreferenceManager = SharedPreferenceManager(context)
         val fcmTokenManager = FCMTokenManager(context, ClientFCMTokenUpdater(context))
+        val deviceInfoUtils = DeviceInfoUtil()
+        val deviceModel = "${deviceInfoUtils.getManufacturer()} ${deviceInfoUtils.getDeviceModel()}"
 
         sharedPreferenceManager.getShopId()?.let { shopId ->
             val deviceFirestore = DeviceFirestore(shopId)
@@ -239,6 +249,7 @@ class InitDeviceRegViewModel : ViewModel() {
                 newDevice.shopId = shopId
                 newDevice.deviceId = deviceId
                 newDevice.imeiOne = imei
+                newDevice.modelNumber = deviceModel
 
                 deviceFirestore.createOrUpdateDevice(deviceId, newDevice, {
                     fcmTokenManager.refreshToken { deviceToken ->
@@ -259,7 +270,7 @@ class InitDeviceRegViewModel : ViewModel() {
                             "Device registered successfully!",
                             Toast.LENGTH_SHORT,
                         ).show()
-                    onRegistrationSuccess()
+                    removeTokenFromBalance(newDevice.deviceId, newDevice.shopId)
                 }, {
                     onRegistrationFailed()
                 })
@@ -269,6 +280,31 @@ class InitDeviceRegViewModel : ViewModel() {
 
     fun onRegistrationSuccess() {
         _uiState.value = InitRegUiState.RegSuccess
+    }
+
+    fun removeTokenFromBalance(
+        tokenId: String,
+        shopId: String,
+    ) {
+        val shopRepo = ShopFirestore()
+        shopRepo.getTokenBalanceList(shopId) {
+            val consumableTokenList = it.toMutableList()
+            val consumableToken = tokenId
+            consumableTokenList.remove(consumableToken)
+            shopRepo.updateSingleField(
+                shopId,
+                Shop::tokenBalance.name,
+                consumableTokenList,
+                {
+                    onRegistrationSuccess()
+                    Log.i("some", "removeTokenFromBalance: Token consumed!!")
+                },
+                {
+                    onRegistrationFailed()
+                    Log.e("TAG", "removeTokenFromBalance: error consuming token!! $it")
+                },
+            )
+        }
     }
 
     fun onRegistrationFailed(errorMessage: String? = null) {
