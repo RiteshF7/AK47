@@ -13,6 +13,7 @@ import com.trex.rexandroidsecureclient.myclient.utils.GlobalExceptionHandler
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.NetworkMonitor
+import com.trex.rexnetwork.utils.PeriodicWorkManager
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class MyApplication : Application() {
@@ -50,6 +51,8 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
         registerNetworkMonitor()
+        PeriodicWorkManager.startPeriodicWork(applicationContext)
+
 //        FCMCheckWorker.enqueuePeriodicWork(this)
     }
 
