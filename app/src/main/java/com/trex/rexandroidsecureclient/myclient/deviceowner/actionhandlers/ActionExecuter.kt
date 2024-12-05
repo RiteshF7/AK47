@@ -7,6 +7,7 @@ import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.deviceowner.actionhandlers.RegisterDeviceHandler
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.data.Actions.ACTION_APP_UNLOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_LOCK
 import com.trex.rexnetwork.data.Actions.ACTION_CALL_UNLOCK
@@ -70,10 +71,6 @@ class ActionExecuter(
     }
 
     fun receiveActionsFromShop(message: ActionMessageDTO) {
-        if (message.payload[message.action.name] == Constants.IS_TEST_MESSAGE) {
-            sendTestResponse(message)
-            return
-        }
         try {
             when (message.action) {
                 ACTION_GET_CONTACTS -> GetContactsHandler(context).handle(message)
@@ -91,6 +88,7 @@ class ActionExecuter(
                 ACTION_CALL_LOCK -> callLock(message)
                 ACTION_CALL_UNLOCK -> callUnlock(message)
                 ACTION_REMOVE_DEVICE -> removeDevice(message)
+                Actions.ACTION_TEST_MESSAGE -> sendTestResponse(message)
                 ACTION_LOCK_SCREEN -> {
                     mDevicePolicyManagerGateway.lockNow({}, {})
                 }

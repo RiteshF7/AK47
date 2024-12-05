@@ -157,6 +157,7 @@
         <service
             android:name="com.trex.rexnetwork.domain.firebasecore.fcm.MyFirebaseMessagingService"
             android:directBootAware="true"
+            android:foregroundServiceType="dataSync"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

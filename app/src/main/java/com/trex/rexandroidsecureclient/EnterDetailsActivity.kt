@@ -51,11 +51,11 @@ class EnterDetailsActivity : Activity() {
         }
 
         retryBtn.setOnClickListener {
-            val deviceRegistration = DeviceRegistration("1", "+919910000163")
-            DevicePresenceRepo().registerPresenceMonitoring(deviceRegistration)
-
-            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
-//            InitDeviceRegistrationActivity.go(this)
+//            val deviceRegistration = DeviceRegistration("1", "+919910000163")
+//            DevicePresenceRepo().registerPresenceMonitoring(deviceRegistration)
+//
+//            this.startMyActivity(UnlockWithCodeActivity::class.java, true)
+//            handleClientRegistration()
 //            finish()
         }
     }
@@ -63,7 +63,7 @@ class EnterDetailsActivity : Activity() {
     fun saveInitialData() {
         sharedPreferenceManager.saveRegCompleteStatus("")
 
-        sharedPreferenceManager.saveShopId("+919910000163")
+        sharedPreferenceManager.saveShopId("+919971000878")
         sharedPreferenceManager.saveDeviceId("")
     }
 
@@ -92,14 +92,13 @@ class EnterDetailsActivity : Activity() {
         Log.e("", "processProvisioningExtras: shop id not found")
 
         extras.getString(Constants.ADMIN_SHOP_ID)?.let { shopId ->
-            handleClientRegistration(shopId)
+            handleClientRegistration()
         }
     }
 
     private fun getProvisioningExtras(): PersistableBundle? = intent.parcelable(DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE)
 
-    private fun handleClientRegistration(shopId: String) {
-        sharedPreferenceManager.saveShopId(shopId)
+    private fun handleClientRegistration() {
         ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
     }
 

@@ -8,9 +8,8 @@ import android.content.Context
 import android.content.IntentFilter
 import android.os.Build
 import com.google.firebase.FirebaseApp
-import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
 import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
-import com.trex.rexandroidsecureclient.myclient.utils.FCMCheckWorker
+import com.trex.rexandroidsecureclient.myclient.utils.GlobalExceptionHandler
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.NetworkMonitor
@@ -45,14 +44,13 @@ class MyApplication : Application() {
         super.onCreate()
         networkMonitor = NetworkMonitor(this)
         sharedPreferenceManager = SharedPreferenceManager(this)
-        Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
+        GlobalExceptionHandler.setup(this)
         instance = this
         initPayloadReceiver()
         FirebaseApp.initializeApp(this)
         createNotificationChannel(this)
         registerNetworkMonitor()
 //        FCMCheckWorker.enqueuePeriodicWork(this)
-
     }
 
     override fun onTerminate() {

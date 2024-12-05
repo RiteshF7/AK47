@@ -1,10 +1,10 @@
 package com.trex.rexandroidsecureclient.deviceowner.actionhandlers
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.domain.repositories.DevicePresenceRepo
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 
 class RemoveDeviceHandler(
     val context: Context,
@@ -13,8 +13,11 @@ class RemoveDeviceHandler(
 
     fun handle(messageDTO: ActionMessageDTO) {
         devicePolicyManagerGatewayImpl.clearDeviceOwnerApp({
-            buildAndSendResponseFromRequest(messageDTO, true, "Device removed successfully!")
+            SharedPreferenceManager(context).getDeviceId()?.let { deviceId ->
+                DevicePresenceRepo().stopPresenceMonitoring(deviceId)
+            }
 
+            buildAndSendResponseFromRequest(messageDTO, true, "Device removed successfully!")
         }, {
             buildAndSendResponseFromRequest(messageDTO, true, "Device removed failed!")
         })
