@@ -6,6 +6,22 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+// Add keystore properties loading
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+// Function to read password from file
+def readPasswordFromFile(String filename) {
+    try {
+        return new File(filename).text.trim()
+    } catch (Exception e) {
+        throw new GradleException("Failed to read password from file: $filename", e)
+    }
+}
+
 android {
     namespace 'com.trex.rexandroidsecureclient'
     compileSdk = 34
@@ -24,9 +40,17 @@ android {
         compose = true
     }
 
-
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias readPasswordFromFile(keystoreProperties['keyAlias'].toString())
+            keyPassword readPasswordFromFile(keystoreProperties['keyPassword'].toString())
+            storeFile file(keystoreProperties['storeFile'].toString())
+            storePassword readPasswordFromFile(keystoreProperties['storePassword'].toString())
+        }
     }
 
     buildTypes {
@@ -34,6 +58,7 @@ android {
             minifyEnabled = true
             shrinkResources = true
             debuggable = true
+            signingConfig signingConfigs.release
             proguardFiles(
                     getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
@@ -92,7 +117,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.8.0")
 
-
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
     implementation "androidx.lifecycle:lifecycle-process:2.5.1"
@@ -129,5 +153,4 @@ dependencies {
     implementation "com.google.code.gson:gson:2.11.0"
 
     implementation("io.github.thanosfisherman.wifiutils:wifiutils:1.6.6")
-
 }

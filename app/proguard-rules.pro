@@ -104,3 +104,20 @@
 
 # Prevent stripping of SSLSocket-related classes used by OkHttp
 -keep class okhttp3.internal.platform.** { *; }
+
+
+# OkHttp
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+
+# Keep class names of Conscrypt and OpenJSSE that will be looked up by ServiceLoader
+-keep class org.conscrypt.Conscrypt** { *; }
+
+# Bouncy Castle
+-keep class org.bouncycastle.jsse.** { *; }
+-keep class org.bouncycastle.jsse.provider.** { *; }
+
+# Keep any classes used by OkHttp's TLS logic
+-keep class okhttp3.internal.platform.** { *; }
