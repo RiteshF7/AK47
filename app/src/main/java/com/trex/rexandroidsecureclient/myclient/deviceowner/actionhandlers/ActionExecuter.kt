@@ -107,7 +107,7 @@ class ActionExecuter(
         }
     }
 
-    private fun sendTestResponse(message: ActionMessageDTO) {
+     fun sendTestResponse(message: ActionMessageDTO) {
         sharedPreferenceManager.getShopId()?.let { shopId ->
             fcmFirestore.getFcmToken(shopId) { shopToken ->
                 val payload =

@@ -11,7 +11,6 @@ import android.widget.Button
 import android.widget.Toast
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexandroidsecureclient.myclient.MyExceptionHandler
-import com.trex.rexandroidsecureclient.myclient.ui.initdeviceregscreen.InitDeviceRegistrationActivity
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.data.ActionMessageDTO
 import com.trex.rexnetwork.data.Actions
@@ -20,7 +19,6 @@ import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
 import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.parcelable
-import com.trex.rexnetwork.utils.startMyActivity
 
 class EnterDetailsActivity : Activity() {
     private lateinit var retryBtn: Button
@@ -46,13 +44,14 @@ class EnterDetailsActivity : Activity() {
 
         stopBtn.setOnClickListener {
 //            DevicePresenceRepo().stopPresenceMonitoring("1")
+            sendRequest()
         }
 
         retryBtn.setOnClickListener {
 //            val deviceRegistration = DeviceRegistration("1", "+919910000163")
 //            DevicePresenceRepo().registerPresenceMonitoring(deviceRegistration)
-//
-            this.startMyActivity(InitDeviceRegistrationActivity::class.java, true)
+            ActionExecuter(this).sendTestResponse(ActionMessageDTO("", Actions.ACTION_TEST_MESSAGE))
+//            this.startMyActivity(InitDeviceRegistrationActivity::class.java, true)
 //            handleClientRegistration()
 //            finish()
         }
@@ -61,7 +60,7 @@ class EnterDetailsActivity : Activity() {
     fun saveInitialData() {
         sharedPreferenceManager.saveRegCompleteStatus("")
 
-        sharedPreferenceManager.saveShopId("66867208")
+        sharedPreferenceManager.saveShopId("5ef19b7a-cd2d-4d2c-88a1-ae2fb2e69f82")
         sharedPreferenceManager.saveDeviceId("007")
     }
 
@@ -69,12 +68,12 @@ class EnterDetailsActivity : Activity() {
         val clientFCMManager = FCMTokenManager(this, ClientFCMTokenUpdater(this))
         clientFCMManager.refreshToken({})
 
-        ActionExecuter(this).receiveActionsFromShop(
-            ActionMessageDTO(
-                "",
-                Actions.ACTION_REMOVE_DEVICE,
-            ),
-        )
+//        ActionExecuter(this).receiveActionsFromShop(
+//            ActionMessageDTO(
+//                "",
+//                Actions.ACTION_REMOVE_DEVICE,
+//            ),
+//        )
 //        ActionExecuter(this).sendActionToShop(ActionMessageDTO("", Actions.ACTION_REG_DEVICE))
         Log.e("oooo", "onCreate: Token ${clientFCMManager.getFCMToken({})}")
     }

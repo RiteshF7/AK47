@@ -42,7 +42,7 @@ abstract class UploadReleaseApkTask : DefaultTask() {
             val request =
                 Request
                     .Builder()
-                    .url("http://127.0.0.1:8080/api/upload")
+                    .url("https://shieldserver-00on.onrender.com/api/upload")
                     .post(requestBody)
                     .build()
 
