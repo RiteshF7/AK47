@@ -37,6 +37,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.data.ActionMessageDTO
@@ -44,6 +45,7 @@ import com.trex.rexnetwork.data.Actions
 import com.trex.rexnetwork.data.NewDevice
 import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
 import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
+import com.trex.rexnetwork.domain.firebasecore.fcm.fcmrequestscreen.PermissionHandlerActivity
 import com.trex.rexnetwork.domain.firebasecore.firesstore.DeviceFirestore
 import com.trex.rexnetwork.domain.firebasecore.firesstore.Shop
 import com.trex.rexnetwork.domain.firebasecore.firesstore.ShopFirestore
@@ -82,12 +84,13 @@ class InitDeviceRegistrationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         actionBar?.hide()
         sharedPreferenceManager = SharedPreferenceManager(this)
+        PermissionHandlerActivity.go(this)
 
         setContent {
             DeviceRegistrationScreen(
                 viewModel = viewModel,
                 onRetry = {
-                    viewModel.retry()
+                    viewModel.retry(this)
                 },
                 onFinish = {
                     setResult(RESULT_OK)
@@ -209,13 +212,20 @@ class InitDeviceRegViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<InitRegUiState>(InitRegUiState.InputState())
     val uiState: StateFlow<InitRegUiState> = _uiState.asStateFlow()
     var maxRetryCount = 3
+
     fun updateImei(imei: String) {
         _uiState.value = InitRegUiState.InputState(imei)
     }
 
-    fun retry() {
-        if (maxRetryCount<0){
-
+    fun retry(context: Context) {
+        if (maxRetryCount < 0) {
+            _uiState.value =
+                InitRegUiState.RegFailed("Unable to create device please reset device and try again!")
+            val devicePolicyManagerGatewayImpl = DevicePolicyManagerGatewayImpl(context)
+            if (devicePolicyManagerGatewayImpl.isDeviceOwnerApp) {
+                devicePolicyManagerGatewayImpl.clearDeviceOwnerApp({}, {})
+                devicePolicyManagerGatewayImpl.removeActiveAdmin({}, {})
+            }
         }
         _uiState.value = InitRegUiState.InputState()
         maxRetryCount--
@@ -227,6 +237,9 @@ class InitDeviceRegViewModel : ViewModel() {
     ) {
         if (imei.isBlank()) {
             _uiState.value = InitRegUiState.RegFailed("IMEI cannot be empty")
+            return
+        } else if (!imei.matches(Regex("^[0-9]{15}$"))) {
+            _uiState.value = InitRegUiState.RegFailed("Invalid IMEI format (should be 15 digits)")
             return
         }
         _uiState.value = InitRegUiState.RegInit

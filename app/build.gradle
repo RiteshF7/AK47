@@ -20,6 +20,12 @@ tasks.register('uploadReleaseApk', UploadReleaseApkTask) {
     dependsOn('assembleRelease')
 }
 
+tasks.register('uploadDebugReleaseApk', UploadDebugReleaseApkTask) {
+    description = 'Uploads the release APK to remote server'
+    group = 'upload'
+    dependsOn('assembleDebug')
+}
+
 // Function to read password from file
 def readPasswordFromFile(String filename) {
     try {
@@ -45,6 +51,7 @@ android {
     buildFeatures {
         aidl = true
         compose = true
+        buildConfig = true
     }
 
     composeOptions {

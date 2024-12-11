@@ -71,7 +71,9 @@ public class FinalizeActivity extends Activity {
         //initial setup
 //        hideAppFromDrawer();
         blockAppUninstallation();
-        setUserRestrictions(mDevicePolicyManagerGateway);
+        if (!BuildConfig.DEBUG) {
+            setUserRestrictions(mDevicePolicyManagerGateway);
+        }
 
 
         //updating token of device on server

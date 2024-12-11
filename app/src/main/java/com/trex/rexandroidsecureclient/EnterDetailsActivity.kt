@@ -35,12 +35,14 @@ class EnterDetailsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_details)
         actionBar?.hide()
-//        finish()
+        if (!BuildConfig.DEBUG) {
+            finish()
+        }
 
         retryBtn = findViewById(R.id.btn_reg_dev_retry)
         stopBtn = findViewById(R.id.btn_reg_dev_stop)
         mDevicePolicyManagerGateway = DevicePolicyManagerGatewayImpl(this)
-        saveInitialData()
+//        saveInitialData()
 
         stopBtn.setOnClickListener {
 //            DevicePresenceRepo().stopPresenceMonitoring("1")
