@@ -37,6 +37,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.R
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
@@ -176,7 +177,10 @@ fun ImeiInputScreen(
     ) {
         OutlinedTextField(
             value = imei,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
             onValueChange = onImeiChange,
             label = { Text("Enter IMEI") },
             singleLine = true,
@@ -197,7 +201,10 @@ fun ImeiInputScreen(
         Button(
             onClick = onSubmit,
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = colorResource(R.color.primary),
@@ -263,7 +270,7 @@ class InitDeviceRegViewModel : ViewModel() {
                 newDevice.deviceId = deviceId
                 newDevice.imeiOne = imei
                 newDevice.modelNumber = deviceModel
-                newDevice.isLocked = false
+                newDevice.deviceLockStatus = false
 
                 deviceFirestore.createOrUpdateDevice(deviceId, newDevice, {
                     fcmTokenManager.refreshToken { deviceToken ->
@@ -284,6 +291,7 @@ class InitDeviceRegViewModel : ViewModel() {
                             "Device registered successfully!",
                             Toast.LENGTH_SHORT,
                         ).show()
+                    addFirebaseTokenListner(context)
                     removeTokenFromBalance(newDevice.deviceId, newDevice.shopId)
                 }, {
                     onRegistrationFailed()
@@ -292,11 +300,46 @@ class InitDeviceRegViewModel : ViewModel() {
         } ?: run { onRegistrationFailed() }
     }
 
-    fun onRegistrationSuccess() {
+    private fun addFirebaseTokenListner(context: Context) {
+        val sharedPreferenceManager = SharedPreferenceManager(context)
+        sharedPreferenceManager.getShopId()?.let { shopId ->
+            sharedPreferenceManager.getDeviceId()?.let { deviceId ->
+                val db = FirebaseFirestore.getInstance()
+                val docRef =
+                    db
+                        .collection("shops")
+                        .document(shopId)
+                        .collection("devices")
+                        .document(deviceId)
+
+                val listener =
+                    docRef.addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            Log.e("", "addFirebaseTokenListner: something went wrong!")
+                            return@addSnapshotListener
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            val fieldValue =
+                                snapshot.getString(NewDevice::fcmToken.name) // or appropriate getter method
+                            if (fieldValue.isNullOrBlank()) {
+                                FCMTokenManager(
+                                    context,
+                                    ClientFCMTokenUpdater(context),
+                                ).refreshToken {
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    private fun onRegistrationSuccess() {
         _uiState.value = InitRegUiState.RegSuccess
     }
 
-    fun removeTokenFromBalance(
+    private fun removeTokenFromBalance(
         tokenId: String,
         shopId: String,
     ) {

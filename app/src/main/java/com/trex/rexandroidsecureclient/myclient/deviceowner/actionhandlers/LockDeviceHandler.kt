@@ -19,10 +19,10 @@ class LockDeviceHandler(
 
     fun handle(messageDTO: ActionMessageDTO) {
         mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
-            context.startMyActivity(UnlockWithCodeActivity::class.java, true)
             SharedPreferenceManager(context).getShopId()?.let { shopId ->
                 SharedPreferenceManager(context).getDeviceId()?.let { deviceId ->
                     DeviceFirestore(shopId).updateLockStatus(deviceId, true, {
+                        context.startMyActivity(UnlockWithCodeActivity::class.java, true)
                         buildAndSendResponseFromRequest(
                             messageDTO,
                             true,
@@ -32,7 +32,7 @@ class LockDeviceHandler(
                         buildAndSendResponseFromRequest(
                             messageDTO,
                             false,
-                            "",
+                            "Please try again!",
                         )
                     })
                 }

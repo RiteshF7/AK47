@@ -21,7 +21,7 @@ class MyApplication : Application() {
     private lateinit var networkMonitor: NetworkMonitor
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val sendActionMessageRepository = SendActionMessageRepository()
-    private lateinit var offlineDeviceWorkManager: OfflineDeviceWorkManager
+    private var offlineDeviceWorkManager: OfflineDeviceWorkManager? = null
 
     companion object {
         private var instance: MyApplication? = null
@@ -55,7 +55,7 @@ class MyApplication : Application() {
         registerNetworkMonitor()
         PeriodicWorkManager.startPeriodicWork(applicationContext)
         offlineDeviceWorkManager = OfflineDeviceWorkManager(applicationContext)
-        offlineDeviceWorkManager.scheduleOfflineCheck()
+        offlineDeviceWorkManager?.scheduleOfflineCheck()
 
 //        FCMCheckWorker.enqueuePeriodicWork(this)
     }
@@ -67,7 +67,7 @@ class MyApplication : Application() {
 
     private fun registerNetworkMonitor() {
         networkMonitor.startMonitoring {
-            offlineDeviceWorkManager.updateLastOnlineTime()
+            offlineDeviceWorkManager?.updateLastOnlineTime()
             sharedPreferenceManager.getShopId()?.let { shopId ->
                 sharedPreferenceManager.getDeviceId()?.let { deviceId ->
                     sendActionMessageRepository.updateMasterCode(

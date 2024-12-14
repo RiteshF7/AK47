@@ -2,6 +2,7 @@ package com.trex.rexandroidsecureclient
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.trex.rexandroidsecureclient.deviceowner.actionhandlers.ActionExecuter
 import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.domain.firebasecore.fcm.ClientFCMTokenUpdater
+import com.trex.rexnetwork.domain.firebasecore.fcm.FCMTokenManager
 import com.trex.rexnetwork.domain.firebasecore.firesstore.MasterCodeFirestore
 import kotlinx.coroutines.delay
 
@@ -65,6 +68,9 @@ class HomeScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar?.hide()
+        FCMTokenManager(this, ClientFCMTokenUpdater(this)).refreshToken {
+            Log.i("new token", "onCreate: $it")
+        }
         val vm by viewModels<HomeScreenViewModel>()
         setContent {
             RecoveryScreen(vm)
@@ -75,7 +81,7 @@ class HomeScreen : ComponentActivity() {
 @Composable
 fun RecoveryScreen(viewModel: HomeScreenViewModel) {
     var masterCode by remember { mutableStateOf("") }
-    //turn on this to set initial data
+    // turn on this to set initial data
     var showInitButton by remember { mutableStateOf(false) }
     var showSuccessMessage by remember { mutableStateOf(false) }
     val context = LocalContext.current
