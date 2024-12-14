@@ -36,7 +36,6 @@ open class BaseActionHandler {
                     payload,
                 )
             if (waitForResult) {
-
                 context.startMyActivityForResult(
                     FcmRequestActivity::class.java,
                     message,
@@ -97,6 +96,7 @@ open class BaseActionHandler {
     ) {
         val status =
             if (isSuccess) Constants.RESPONSE_RESULT_SUCCESS else Constants.RESPONSE_RESULT_FAILED
+
         val payloadMap =
             mapOf(
                 Constants.KEY_RESPOSE_RESULT_STATUS to status,

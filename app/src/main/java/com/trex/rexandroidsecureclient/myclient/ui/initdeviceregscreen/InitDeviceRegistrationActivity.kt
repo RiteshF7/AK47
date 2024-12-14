@@ -263,6 +263,7 @@ class InitDeviceRegViewModel : ViewModel() {
                 newDevice.deviceId = deviceId
                 newDevice.imeiOne = imei
                 newDevice.modelNumber = deviceModel
+                newDevice.isLocked = false
 
                 deviceFirestore.createOrUpdateDevice(deviceId, newDevice, {
                     fcmTokenManager.refreshToken { deviceToken ->

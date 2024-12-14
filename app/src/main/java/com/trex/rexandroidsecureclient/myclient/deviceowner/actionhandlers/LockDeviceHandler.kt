@@ -5,6 +5,8 @@ import android.util.Log
 import com.trex.rexandroidsecureclient.DevicePolicyManagerGatewayImpl
 import com.trex.rexandroidsecureclient.myclient.ui.unlockwithcodescreen.UnlockWithCodeActivity
 import com.trex.rexnetwork.data.ActionMessageDTO
+import com.trex.rexnetwork.domain.firebasecore.firesstore.DeviceFirestore
+import com.trex.rexnetwork.utils.SharedPreferenceManager
 import com.trex.rexnetwork.utils.startMyActivity
 
 class LockDeviceHandler(
@@ -18,7 +20,23 @@ class LockDeviceHandler(
     fun handle(messageDTO: ActionMessageDTO) {
         mDevicePolicyManagerGateway.setLockTaskPackages(arrayOf(context.packageName), {
             context.startMyActivity(UnlockWithCodeActivity::class.java, true)
-            buildAndSendResponseFromRequest(messageDTO, true, "Device Locked Successfully!")
+            SharedPreferenceManager(context).getShopId()?.let { shopId ->
+                SharedPreferenceManager(context).getDeviceId()?.let { deviceId ->
+                    DeviceFirestore(shopId).updateLockStatus(deviceId, true, {
+                        buildAndSendResponseFromRequest(
+                            messageDTO,
+                            true,
+                            "Device Locked Successfully!",
+                        )
+                    }, {
+                        buildAndSendResponseFromRequest(
+                            messageDTO,
+                            false,
+                            "",
+                        )
+                    })
+                }
+            }
             Log.i("", "lockDevice: Success")
         }, { error ->
             buildAndSendResponseFromRequest(messageDTO, false, "No Admin access!")

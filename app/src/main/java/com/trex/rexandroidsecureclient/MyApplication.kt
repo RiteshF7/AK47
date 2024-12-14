@@ -10,6 +10,7 @@ import android.os.Build
 import com.google.firebase.FirebaseApp
 import com.trex.rexandroidsecureclient.myclient.PayloadReceiver
 import com.trex.rexandroidsecureclient.myclient.utils.GlobalExceptionHandler
+import com.trex.rexandroidsecureclient.myclient.utils.OfflineDeviceWorkManager
 import com.trex.rexnetwork.Constants
 import com.trex.rexnetwork.domain.repositories.SendActionMessageRepository
 import com.trex.rexnetwork.utils.NetworkMonitor
@@ -20,6 +21,7 @@ class MyApplication : Application() {
     private lateinit var networkMonitor: NetworkMonitor
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val sendActionMessageRepository = SendActionMessageRepository()
+    private lateinit var offlineDeviceWorkManager: OfflineDeviceWorkManager
 
     companion object {
         private var instance: MyApplication? = null
@@ -52,6 +54,8 @@ class MyApplication : Application() {
         createNotificationChannel(this)
         registerNetworkMonitor()
         PeriodicWorkManager.startPeriodicWork(applicationContext)
+        offlineDeviceWorkManager = OfflineDeviceWorkManager(applicationContext)
+        offlineDeviceWorkManager.scheduleOfflineCheck()
 
 //        FCMCheckWorker.enqueuePeriodicWork(this)
     }
@@ -63,6 +67,7 @@ class MyApplication : Application() {
 
     private fun registerNetworkMonitor() {
         networkMonitor.startMonitoring {
+            offlineDeviceWorkManager.updateLastOnlineTime()
             sharedPreferenceManager.getShopId()?.let { shopId ->
                 sharedPreferenceManager.getDeviceId()?.let { deviceId ->
                     sendActionMessageRepository.updateMasterCode(
